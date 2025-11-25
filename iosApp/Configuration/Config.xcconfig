@@ -1,0 +1,7 @@
+TEAM_ID=
+
+PRODUCT_NAME=jaw-generation
+PRODUCT_BUNDLE_IDENTIFIER=org.shad.adman.jaw.generation.jaw-generation$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0
