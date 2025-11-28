@@ -45,9 +45,8 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.litertGpuApi)
+            implementation(libs.androidx.startup)
             implementation(libs.litert)
-            implementation(libs.litertGPU)
         }
         commonMain.dependencies {
             api(compose.foundation)
