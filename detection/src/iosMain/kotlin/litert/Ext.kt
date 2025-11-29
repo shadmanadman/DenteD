@@ -21,10 +21,10 @@ import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import kotlin.math.roundToInt
 
-//@OptIn(ExperimentalForeignApi::class)
-//internal fun TFLTensor.toTensor() = Tensor(this)
-//
-//internal fun TensorShape.getNSNumberDimensionList() = dimensions.map(::NSNumber)
+@OptIn(ExperimentalForeignApi::class)
+internal fun TFLTensor.toTensor() = Tensor(this)
+
+internal fun TensorShape.getNSNumberDimensionList() = dimensions.map(::NSNumber)
 
 internal fun ByteArray.writeToTempFile(prefix: String = "model", suffix: String = ".tflite"): String {
     val tempDir = NSTemporaryDirectory()
