@@ -33,7 +33,7 @@ actual class Interpreter actual constructor(val model: ByteArray) {
         }
     }
     @OptIn(ExperimentalForeignApi::class)
-    actual fun run(inputs: List<Any>, outputs: Map<Int, Any>) {
+    actual fun run(inputs: ModelInput, outputs: ModelOutput) {
         if (inputs.size > getInputTensorCount()) throw IllegalArgumentException("Wrong inputs dimension.")
         val interpreter = requireNotNull(tflInterpreter) { "Interpreter has been closed or not initialized." }
 

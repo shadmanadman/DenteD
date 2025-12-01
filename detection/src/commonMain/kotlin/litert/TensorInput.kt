@@ -4,8 +4,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 typealias PlatformTensorBuffer = Any
 expect fun ImageBitmap.toScaledByteBuffer(
-    inputWidth: Int,
-    inputHeight: Int,
+    inputWidth: Float = 640f,
+    inputHeight: Float = 640f,
     inputAllocateSize: Int,
     normalize: Boolean = false
 ): PlatformTensorBuffer

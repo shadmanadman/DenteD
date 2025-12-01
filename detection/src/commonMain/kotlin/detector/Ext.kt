@@ -1,9 +1,67 @@
 package detector
 
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Paint
+import ext.resize
 import model.JawSide
 import model.JawType
 import model.ToothNumber
+import kotlin.math.max
 
+fun ImageBitmap.squareMe(maxBound: Int = 640): ImageBitmap {
+    val imageWidth = this.width.toFloat()
+    val imageHeight = this.height.toFloat()
+    val maxSize = maxBound.toFloat()
+
+    // Scale factor for fitting the image inside maxBound
+    val scale = max(imageWidth, imageHeight) / maxSize
+    val resizedWidth = imageWidth / scale
+    val resizedHeight = imageHeight / scale
+
+    // Step 1: Resize the ImageBitmap
+    val resized = this.resize(
+        resizedWidth.toInt(),
+        resizedHeight.toInt()
+    )
+
+    // Step 2: Create a square ImageBitmap (maxBound × maxBound)
+    val output = ImageBitmap(width = maxBound, height = maxBound)
+
+    val canvas = Canvas(output)
+    val paint = Paint()
+
+    // Fill background (you can change this color)
+    paint.color = Color.DarkGray
+    canvas.drawRect(
+        left = 0f,
+        top = 0f,
+        right = maxSize,
+        bottom = maxSize,
+        paint = paint
+    )
+
+    // Step 3: Center the resized image
+    val dx = (maxSize - resizedWidth) / 2f
+    val dy = (maxSize - resizedHeight) / 2f
+
+    canvas.drawImage(
+        image = resized,
+        topLeftOffset = androidx.compose.ui.geometry.Offset(dx, dy),
+        paint = paint
+    )
+
+    return output
+}
+
+fun ImageBitmap.calculateNormalizedPadding(targetSize: Float = 640f): Float {
+    val scale = this.height / targetSize
+    val resizedWidth = this.width / scale
+    val dx = (targetSize - resizedWidth) / 2f
+
+    return dx / targetSize   // normalized padding
+}
 
 fun String.toToothNumber(): ToothNumber {
     return when (this) {

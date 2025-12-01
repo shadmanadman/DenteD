@@ -48,19 +48,21 @@ import java.nio.ByteOrder
 
 @RequiresApi(Build.VERSION_CODES.O)
 actual fun ImageBitmap.toScaledByteBuffer(
-    inputWidth: Int,
-    inputHeight: Int,
+    inputWidth: Float,
+    inputHeight: Float,
     inputAllocateSize: Int,
     normalize: Boolean
 ): PlatformTensorBuffer {
-    val bitmap = this.asAndroidBitmap().scale(inputWidth, inputHeight)
+    val inputWidthInt = inputWidth.toInt()
+    val inputHeightInt = inputHeight.toInt()
+    val bitmap = this.asAndroidBitmap().scale(inputWidthInt,inputHeightInt)
 
     // Each pixel = 3 channels (R,G,B)
     val floatArray = FloatArray(inputAllocateSize)
 
     var index = 0
-    for (y in 0 until inputHeight) {
-        for (x in 0 until inputWidth) {
+    for (y in 0 until inputWidthInt) {
+        for (x in 0 until inputHeightInt) {
             val pixel = bitmap[x, y]
 
             val r = Color.red(pixel).toFloat()

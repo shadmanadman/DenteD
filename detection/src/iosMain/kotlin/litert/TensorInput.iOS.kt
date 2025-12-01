@@ -3,8 +3,8 @@ package litert
 import androidx.compose.ui.graphics.ImageBitmap
 
 actual fun ImageBitmap.toScaledByteBuffer(
-    inputWidth: Int,
-    inputHeight: Int,
+    inputWidth: Float,
+    inputHeight: Float,
     inputAllocateSize: Int,
     normalize: Boolean
 ): PlatformTensorBuffer {

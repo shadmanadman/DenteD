@@ -3,10 +3,17 @@ package model
 import androidx.compose.ui.graphics.ImageBitmap
 
 enum class JawPosition { UpperJaw, LowerJaw, FrontTeeth, FrontTeethUpper, FrontTeethLower }
-enum class JawSide {LEFT,RIGHT,MIDDLE}
+enum class JawSide { LEFT, RIGHT, MIDDLE }
 data class DetectionRow(
     val toothCategory: ToothBox,
     val toothSegmentationPoint: List<ToothSegmentationPoint>
+)
+
+class Box(
+    var x: Float,
+    val y: Float,
+    val width: Float,
+    val height: Float,
 )
 
 data class ToothSegmentationPoint(val x: Float, val y: Float)
@@ -19,7 +26,8 @@ data class ToothBox(
     val maxConf: Float,
     var number: Int,
     var alphabeticNumber: String,
-    var clarityLevel:Double = 0.0)
+    var clarityLevel: Double = 0.0
+)
 
 enum class DetectingStatus {
     Stopped,
@@ -42,7 +50,7 @@ enum class JawSideStatus {
     FRONT
 }
 
-enum class JawType{
+enum class JawType {
     UPPER,
     LOWER,
     FRONT
@@ -56,6 +64,7 @@ data class AcceptedFrame(
     val boxes: List<ToothBox> = listOf(),
     var fileName: String = ""
 )
+
 enum class ToothDetectionStatus {
     INITIAL,
     DETECTED

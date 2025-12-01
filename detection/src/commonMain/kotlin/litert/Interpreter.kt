@@ -1,11 +1,14 @@
 package litert
 
+typealias ModelOutput = Map<Int, Any>
+typealias ModelOutputReshaped = Array<Array<FloatArray>>
+typealias ModelInput = List<Any>
 internal expect class Interpreter(model: ByteArray) {
     fun init()
     /**
      * Runs model inference if the model takes multiple inputs, or returns multiple outputs.
      */
-    fun run(inputs: List<Any>, outputs: Map<Int, Any>)
+    fun run(inputs: ModelInput, outputs: ModelOutput)
 
     /**
      * Release resources associated with the [Interpreter].

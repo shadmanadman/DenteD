@@ -22,7 +22,7 @@ actual class Interpreter actual constructor(model: ByteArray) {
         inputBuffers = compiledModel.createInputBuffers()
         outputBuffers = compiledModel.createOutputBuffers()
     }
-    actual fun run(inputs: List<Any>, outputs: Map<Int, Any>) {
+    actual fun run(inputs: ModelInput, outputs: ModelOutput) {
         // prepare input
         val firstInput = inputs[0] as FloatArray
         inputBuffers[0].writeFloat(firstInput)

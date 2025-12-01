@@ -146,7 +146,7 @@ internal fun ImageBitmap.toUIImage(): UIImage? {
 
 
 @OptIn(ExperimentalForeignApi::class)
-fun UIImage.scaleTo(width: Int, height: Int): UIImage {
+fun UIImage.scaleTo(width: Float, height: Float): UIImage {
     val size = CGSizeMake(width.toDouble(), height.toDouble())
 
     UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
