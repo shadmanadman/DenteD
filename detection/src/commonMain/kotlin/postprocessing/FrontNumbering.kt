@@ -1,6 +1,10 @@
-package preprocessing
+package postprocessing
 
-import kotlin.math.*
+import analyzer.IMAGE_TYPE_LOWER
+import analyzer.IMAGE_TYPE_UPPER
+import model.ToothBox
+import kotlin.math.abs
+
 object FrontNumbering {
 
     private fun defineNumberingInd(
@@ -384,6 +388,42 @@ object FrontNumbering {
         val lowerBoxesInd = boxes.indices.filter { it -> boxes[it].category in 4..7 }
         val lowerBoxes = boxes.filter { it.category in 4..7 }
         return SeparateToothBoxes(upperBoxesInd, upperBoxes, lowerBoxesInd, lowerBoxes)
+    }
+
+    fun processNumberingForFront(
+        normalizedToothBox: List<ToothBox>,
+        normalizedPadding: Float
+    ): NumberingResult {
+        val separatedUpperAndLower =
+            separateUpperLower(normalizedToothBox)
+        val numberingResultForLower = FrontNumbering.numbering(
+            boxes_ = separatedUpperAndLower.lowerBoxes,
+            imgType = IMAGE_TYPE_LOWER,
+            normalizedPadding = normalizedPadding
+        )
+        val numberingResultForUpper = FrontNumbering.numbering(
+            boxes_ = separatedUpperAndLower.upperBoxes,
+            imgType = IMAGE_TYPE_UPPER,
+            normalizedPadding = normalizedPadding
+        )
+
+        if (numberingResultForUpper.boxes.isEmpty() || numberingResultForLower.boxes.isEmpty())
+            return NumberingResult()
+
+        val numTeeth = numberingResultForUpper.numTeeth + numberingResultForLower.numTeeth
+        val boxes = mutableListOf<ToothBox>().apply {
+            addAll(numberingResultForLower.boxes)
+            addAll(numberingResultForUpper.boxes)
+        }
+        val missing = mutableListOf<String>().apply {
+            addAll(numberingResultForLower.missing)
+            addAll(numberingResultForUpper.missing)
+        }
+        val visibleBoxes = mutableListOf<ToothBox>().apply {
+            addAll(numberingResultForLower.visibleBoxes)
+            addAll(numberingResultForUpper.visibleBoxes)
+        }
+        return NumberingResult(numTeeth, boxes, missing, visibleBoxes)
     }
 
     data class SeparateToothBoxes(

@@ -1,5 +1,7 @@
 package postprocessing
 
+import model.JawSide
+import model.JawType
 import model.ToothBox
 
 private const val TENSOR_IMAGE_SIZE = 640F
@@ -79,6 +81,50 @@ object OutputProcessing {
         return validRows
     }
 
+
+    /**
+     * Determine if the user should be moving the device closer or further away.
+     */
+   fun calculateDistanceBetweenDeviceAndTooth(
+        visibleBoxesCount: Int,
+        missedCount: Int,
+        jawSide: JawSide,
+        jawType: JawType,
+        onMoveCloser: () -> Unit,
+        onMoveMuchCloser: () -> Unit,
+        onMoveAway: () -> Unit,
+        onMoveMuchAway: () -> Unit
+    ): Boolean {
+
+        println("current tooth count ${visibleBoxesCount + missedCount}")
+
+        val acceptableToothCount = visibleBoxesCount + missedCount
+
+        if (jawType == JawType.FRONT || jawSide == JawSide.MIDDLE)
+            return false
+
+        if (jawSide == JawSide.LEFT || jawSide == JawSide.RIGHT) {
+            if (acceptableToothCount < 5) {
+                if (acceptableToothCount < 4) {
+                    onMoveMuchAway()
+                } else {
+                    onMoveAway()
+                }
+                return true
+            } else if (acceptableToothCount in 5..6) {
+                return false
+            } else {
+                if (acceptableToothCount > 7) {
+                    onMoveMuchCloser()
+                } else {
+                    onMoveCloser()
+                }
+                return true
+            }
+        }
+        return false
+    }
+
     fun calculateOverlap(box1: ToothBox, box2: ToothBox): Float {
         val x1 = box1.x
         val y1 = box1.y
@@ -146,6 +192,28 @@ object OutputProcessing {
         }
 
         return selectedBoxes
+    }
+
+    private fun calibratedToothClarityLevel(
+        frameAsBitmap: Bitmap,
+        visibleBoxes: List<ToothCategoryBox>
+    ): Double {
+        val middleTooth = when {
+            visibleBoxes.size <= 2 -> visibleBoxes.first()
+            visibleBoxes.size > 2 -> visibleBoxes[visibleBoxes.size / 2]
+            else -> visibleBoxes.first()
+        }
+
+        val realX = ((middleTooth.x - (middleTooth.width / 2)) * 640)
+        val realY = ((middleTooth.y - (middleTooth.height / 2)) * 640)
+        val realWidth = (middleTooth.width * 640)
+        val realHeight = (middleTooth.height * 640)
+
+        val rect = RectF(realX, realY, realX + realWidth, realY + realHeight)
+        val clarityLevel =
+            ClarityLevel.determineClarityLevel(cropBitmap(frameAsBitmap, rect.toRect()))
+        println("Calibrated Tooth Clarity level:$clarityLevel")
+        return clarityLevel
     }
 
     /**

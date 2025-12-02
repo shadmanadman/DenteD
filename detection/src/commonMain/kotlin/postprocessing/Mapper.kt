@@ -1,4 +1,4 @@
-package preprocessing
+package postprocessing
 
 val lowerNumberingMapping: Map<String, Map<String, List<String>>> = mapOf(
     "0" to mapOf("r" to listOf("lr2", "lr1"), "l" to listOf("ll1", "ll2")),
