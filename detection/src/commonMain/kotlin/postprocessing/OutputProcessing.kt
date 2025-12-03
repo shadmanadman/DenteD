@@ -194,27 +194,27 @@ object OutputProcessing {
         return selectedBoxes
     }
 
-    private fun calibratedToothClarityLevel(
-        frameAsBitmap: Bitmap,
-        visibleBoxes: List<ToothCategoryBox>
-    ): Double {
-        val middleTooth = when {
-            visibleBoxes.size <= 2 -> visibleBoxes.first()
-            visibleBoxes.size > 2 -> visibleBoxes[visibleBoxes.size / 2]
-            else -> visibleBoxes.first()
-        }
-
-        val realX = ((middleTooth.x - (middleTooth.width / 2)) * 640)
-        val realY = ((middleTooth.y - (middleTooth.height / 2)) * 640)
-        val realWidth = (middleTooth.width * 640)
-        val realHeight = (middleTooth.height * 640)
-
-        val rect = RectF(realX, realY, realX + realWidth, realY + realHeight)
-        val clarityLevel =
-            ClarityLevel.determineClarityLevel(cropBitmap(frameAsBitmap, rect.toRect()))
-        println("Calibrated Tooth Clarity level:$clarityLevel")
-        return clarityLevel
-    }
+//    fun calibratedToothClarityLevel(
+//        frameAsBitmap: Bitmap,
+//        visibleBoxes: List<ToothCategoryBox>
+//    ): Double {
+//        val middleTooth = when {
+//            visibleBoxes.size <= 2 -> visibleBoxes.first()
+//            visibleBoxes.size > 2 -> visibleBoxes[visibleBoxes.size / 2]
+//            else -> visibleBoxes.first()
+//        }
+//
+//        val realX = ((middleTooth.x - (middleTooth.width / 2)) * 640)
+//        val realY = ((middleTooth.y - (middleTooth.height / 2)) * 640)
+//        val realWidth = (middleTooth.width * 640)
+//        val realHeight = (middleTooth.height * 640)
+//
+//        val rect = RectF(realX, realY, realX + realWidth, realY + realHeight)
+//        val clarityLevel =
+//            ClarityLevel.determineClarityLevel(cropBitmap(frameAsBitmap, rect.toRect()))
+//        println("Calibrated Tooth Clarity level:$clarityLevel")
+//        return clarityLevel
+//    }
 
     /**
      * Post-processing of the detection results, Reshape the output buffer to [1 8400 40].

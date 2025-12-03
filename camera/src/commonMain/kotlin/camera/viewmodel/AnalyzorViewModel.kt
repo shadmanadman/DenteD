@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import litert.Litert
 import model.JawType
-import preprocessing.NumberingResult
+import postprocessing.NumberingResult
 
 private const val SEGMENT_UPPER_MODEL_NAME = "detection_upper_float32.tflite"
 private const val SEGMENT_LOWER_MODEL_NAME = "detection_lower_float32.tflite"

@@ -261,7 +261,7 @@ object SideDetector {
 
 
 
-    private fun detectCurrentSide(
+    fun detectCurrentSide(
         visibleSet: Set<String?>,
         missing: List<String>,
         jawType: JawType

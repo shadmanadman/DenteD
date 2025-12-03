@@ -10,6 +10,7 @@ import litert.Litert
 import litert.ModelOutputReshaped
 import litert.toScaledByteBuffer
 import model.Box
+import model.JawType
 import model.ToothBox
 
 const val INPUT_IMAGE_SIZE = 640F
@@ -140,5 +141,21 @@ fun CoroutineScope.processOutput(
 
         send(validToothBoxExtractor(maxScore, maxScoreIndex, modelOutputLooper).receive())
     }
+
+
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun CoroutineScope.detectCurrentSide(
+    jawType: JawType,
+    visibleBox: List<ToothBox>,
+    missing: List<String>,
+) = produce {
+    val visibleBox = visibleBox.map { it.alphabeticNumber }
+        .toSet()
+    send(
+        SideDetector.detectCurrentSide(visibleBox,missing,jawType)
+    )
+}
+
 
 

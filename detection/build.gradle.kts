@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.litert)
         }
         commonMain.dependencies {
+            implementation(libs.skiko)
             api(compose.foundation)
             api(project(":shared"))
         }

@@ -14,6 +14,7 @@ junit = "4.13.2"
 kotlin = "2.2.21"
 kotlin-coroutine = "1.10.2"
 koin = "4.1.1"
+skiko = "0.9.37.3"
 startup = "1.2.0"
 precompose = "1.7.0-alpha03"
 litert = "2.0.3"
@@ -50,6 +51,7 @@ precompose-core = { module = "moe.tlaster:precompose", version.ref = "precompose
 litertGpuApi = { module = "com.google.ai.edge.litert:litert-gpu-api", version.ref = "litert" }
 litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 litertGPU = { module = "com.google.ai.edge.litert:litert-gpu", version.ref = "litert" }
+skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
