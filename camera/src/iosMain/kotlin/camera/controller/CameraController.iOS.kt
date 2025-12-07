@@ -1,0 +1,122 @@
+package camera.controller
+
+import kotlinx.atomicfu.atomic
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.flow.StateFlow
+import platform.AVFoundation.AVCaptureMetadataOutput
+import platform.AVFoundation.AVCaptureMetadataOutputObjectsDelegateProtocol
+import platform.AVFoundation.AVCaptureTorchMode
+import platform.AVFoundation.AVCaptureTorchModeAuto
+import platform.AVFoundation.AVCaptureTorchModeOff
+import platform.AVFoundation.AVCaptureTorchModeOn
+import platform.AVFoundation.AVCaptureVideoOrientation
+import platform.AVFoundation.AVCaptureVideoOrientationLandscapeLeft
+import platform.AVFoundation.AVCaptureVideoOrientationLandscapeRight
+import platform.AVFoundation.AVCaptureVideoOrientationPortrait
+import platform.AVFoundation.AVCaptureVideoOrientationPortraitUpsideDown
+import platform.SharedImage
+import platform.UIKit.UIDevice
+import platform.UIKit.UIDeviceOrientation
+import platform.UIKit.UIViewController
+
+actual class CameraController(
+    internal var torchMode: TorchMode,
+    internal var cameraLens: CameraLens,
+    internal var imageFormat: ImageFormat,
+    internal var cameraDeviceType: String?,
+) : UIViewController(null, null){
+    private var isCapturing = atomic(false)
+    private var metadataOutput = AVCaptureMetadataOutput()
+    private var metadataObjectsDelegate: AVCaptureMetadataOutputObjectsDelegateProtocol? = null
+    private val memoryManager = MemoryManager
+    private val customCameraController = CustomCameraController()
+
+
+    override fun viewDidLoad() {
+        super.viewDidLoad()
+
+        memoryManager.initialize()
+        setupCamera()
+    }
+
+
+    override fun viewWillAppear(animated: Boolean) {
+        super.viewWillAppear(animated)
+        memoryManager.updateMemoryStatus()
+    }
+
+    override fun viewDidDisappear(animated: Boolean) {
+        super.viewDidDisappear(animated)
+
+        memoryManager.clearBufferPools()
+    }
+
+    fun getCameraPreviewLayer() = customCameraController.cameraPreviewLayer
+
+    internal fun currentVideoOrientation(): AVCaptureVideoOrientation {
+        val orientation = UIDevice.currentDevice.orientation
+        return when (orientation) {
+            UIDeviceOrientation.UIDeviceOrientationPortrait -> AVCaptureVideoOrientationPortrait
+            UIDeviceOrientation.UIDeviceOrientationPortraitUpsideDown -> AVCaptureVideoOrientationPortraitUpsideDown
+            UIDeviceOrientation.UIDeviceOrientationLandscapeLeft -> AVCaptureVideoOrientationLandscapeRight
+            UIDeviceOrientation.UIDeviceOrientationLandscapeRight -> AVCaptureVideoOrientationLandscapeLeft
+            else -> AVCaptureVideoOrientationPortrait
+        }
+    }
+
+    private fun setupCamera() {
+        customCameraController.setupSession(cameraDeviceType)
+        customCameraController.setupPreviewLayer(view)
+
+        if (customCameraController.captureSession?.canAddOutput(metadataOutput) == true) {
+            customCameraController.captureSession?.addOutput(metadataOutput)
+        }
+
+        startSession()
+
+        customCameraController.onPhotoCapture = { image ->
+            image?.let {
+                //processImageCapture(it)
+            }
+        }
+
+        customCameraController.onError = { error ->
+            println("Camera Error: $error")
+        }
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    override fun viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        customCameraController.cameraPreviewLayer?.setFrame(view.bounds)
+    }
+
+    actual fun setTorchMode(mode: TorchMode) {
+        torchMode = mode
+        customCameraController.setTorchMode(mode.toAVCaptureTorchMode())
+    }
+
+
+    actual fun startSession() {
+        memoryManager.clearBufferPools()
+        customCameraController.startSession()
+    }
+
+    actual fun stopSession() {
+        customCameraController.stopSession()
+    }
+    private fun TorchMode.toAVCaptureTorchMode(): AVCaptureTorchMode = when (this) {
+        TorchMode.ON -> AVCaptureTorchModeOn
+        TorchMode.OFF -> AVCaptureTorchModeOff
+        TorchMode.AUTO -> AVCaptureTorchModeAuto
+    }
+
+    actual fun onImageAvailable(): StateFlow<SharedImage> {
+        TODO("Not yet implemented")
+    }
+
+    actual fun captureImage(): StateFlow<SharedImage> {
+        TODO("Not yet implemented")
+    }
+
+}
