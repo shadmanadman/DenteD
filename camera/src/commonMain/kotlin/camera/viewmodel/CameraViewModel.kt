@@ -11,6 +11,7 @@ import model.FocusSection
 import model.FrameAnalyzeStatus
 import model.JawSideStatus
 import model.ToothNumber
+import postprocessing.NumberingResult
 
 
 class CameraViewModel : ViewModel(){
@@ -69,4 +70,13 @@ class CameraViewModel : ViewModel(){
             }
         }
     }
+
+
+
+
+    private val _numberingResult = MutableStateFlow(NumberingResult())
+    val numberingResult = _numberingResult.asStateFlow()
+
+    private val _normalizedPadding = MutableStateFlow(80f)
+    val normalizedPadding = _normalizedPadding.asStateFlow()
 }
