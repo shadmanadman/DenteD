@@ -2,7 +2,6 @@ package camera.controller
 
 import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.flow.StateFlow
 import platform.AVFoundation.AVCaptureMetadataOutput
 import platform.AVFoundation.AVCaptureMetadataOutputObjectsDelegateProtocol
 import platform.AVFoundation.AVCaptureTorchMode
@@ -21,9 +20,7 @@ import platform.UIKit.UIViewController
 
 actual class CameraController(
     internal var torchMode: TorchMode,
-    internal var cameraLens: CameraLens,
-    internal var imageFormat: ImageFormat,
-    internal var cameraDeviceType: String?,
+    internal var cameraDeviceType: String
 ) : UIViewController(null, null){
     private var isCapturing = atomic(false)
     private var metadataOutput = AVCaptureMetadataOutput()

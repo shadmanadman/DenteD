@@ -26,7 +26,8 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
 
 
     override fun build(): CameraController {
-        val cameraController = CameraController(torchMode = torchMode)
+        val cameraController =
+            CameraController(torchMode = torchMode, cameraDeviceType = cameraDeviceType ?: "")
         return cameraController
     }
 }
