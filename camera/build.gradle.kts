@@ -30,12 +30,14 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.precompose.core)
             implementation(compose.material3)
+            implementation(compose.components.resources)
             implementation(libs.androidx.camera)
             implementation(libs.androidx.camera.core)
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.atomicfu)
             api(project(":shared"))
             api(project(":detection"))
+            api(project(":resource"))
         }
         commonTest.dependencies {
         }
