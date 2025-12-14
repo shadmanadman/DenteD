@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
+import android.hardware.camera2.CameraMetadata.LENS_FACING_BACK
 import android.provider.ContactsContract
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -29,12 +30,7 @@ import platform.SharedImage
 actual class CameraController(
     val context: Context,
     val lifecycleOwner: LifecycleOwner,
-    internal var flashMode: ImageCapture.FlashMode,
     internal var torchMode: TorchMode,
-    internal var cameraLens: CameraLens,
-    internal var imageFormat: ImageFormat,
-    internal var directory: ContactsContract.Directory,
-    internal var cameraDeviceType: String,
 ) {
     private var cameraProvider: ProcessCameraProvider? = null
     private var imageCapture: ImageCapture? = null
@@ -68,7 +64,7 @@ actual class CameraController(
                     }
 
                 val cameraSelector = CameraSelector.Builder()
-                    .requireLensFacing(cameraLens.toCameraXLensFacing())
+                    .requireLensFacing(LENS_FACING_BACK)
                     .build()
 
 
