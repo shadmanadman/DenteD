@@ -3,11 +3,10 @@ package camera.controller
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
-import android.graphics.Color
 import android.hardware.camera2.CameraMetadata.LENS_FACING_BACK
-import android.provider.ContactsContract
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -16,16 +15,15 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.concurrent.futures.await
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.scale
 import androidx.lifecycle.LifecycleOwner
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.concurrent.Executors
-import kotlin.use
-import androidx.core.graphics.get
-import detector.INPUT_IMAGE_SIZE
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import model.FocusPoints
 import platform.SharedImage
+import java.util.concurrent.Executors
 
 actual class CameraController(
     val context: Context,
@@ -142,4 +140,30 @@ actual class CameraController(
         memoryManager.clearBufferPools()
     }
 
+    actual suspend fun setFocus(focusPoints: FocusPoints): Boolean {
+
+        return withContext(Dispatchers.Main) {
+            try {
+                val meteringPoint = previewView.meteringPointFactory.createPoint(
+                    focusPoints.meteringPoint.x,
+                    focusPoints.meteringPoint.y,
+                    focusPoints.meteringPoint.size
+                )
+                val focusMeteringAction = FocusMeteringAction.Builder(meteringPoint).build()
+                camera?.cameraControl?.startFocusAndMetering(focusMeteringAction)?.await()
+                delay(WAIT_FOR_FOCUS_TO_FINISH)
+                true
+            } catch (e: Exception) {
+                println("Error in focusing: ${e.message}")
+                false
+            }
+        }
+    }
+
+    actual fun clearFocus(){
+        camera?.cameraControl?.cancelFocusAndMetering()
+    }
 }
+
+const val WAIT_FOR_FOCUS_TO_FINISH = 2000L
+

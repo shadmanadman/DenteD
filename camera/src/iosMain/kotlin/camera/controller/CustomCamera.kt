@@ -1,7 +1,9 @@
 package camera.controller
 
+import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.*
+import platform.CoreGraphics.CGPoint
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.UIKit.UIDevice
@@ -18,6 +20,7 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
     private var backCamera: AVCaptureDevice? = null
     private var frontCamera: AVCaptureDevice? = null
     private var currentCamera: AVCaptureDevice? = null
+    private var videoInput: AVCaptureDeviceInput? = null
     private var photoOutput: AVCapturePhotoOutput? = null
     var cameraPreviewLayer: AVCaptureVideoPreviewLayer? = null
     private var isUsingFrontCamera = false
@@ -78,11 +81,13 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
             AVCapturePhotoQualityPrioritizationBalanced
         )
 
-        photoOutput?.setPreparedPhotoSettingsArray(emptyList<String>(), completionHandler = { settings, error ->
-            if (error != null) {
-                onError?.invoke(CameraException.ConfigurationError(error.localizedDescription))
-            }
-        })
+        photoOutput?.setPreparedPhotoSettingsArray(
+            emptyList<String>(),
+            completionHandler = { settings, error ->
+                if (error != null) {
+                    onError?.invoke(CameraException.ConfigurationError(error.localizedDescription))
+                }
+            })
 
         if (captureSession?.canAddOutput(photoOutput!!) == true) {
             captureSession?.addOutput(photoOutput!!)
@@ -108,7 +113,8 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
 
         val devices = discoverySession.devices.ifEmpty {
             // Fallback to default device if discovery fails
-            AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)?.let { listOf<Any?>(it) } ?: emptyList()
+            AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)?.let { listOf<Any?>(it) }
+                ?: emptyList()
         }
 
         // Categorize devices by position
@@ -210,6 +216,25 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
                 }
             }
         }
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    fun setFocus(cgPoint: CValue<CGPoint>) {
+        currentCamera?.let { camera->
+            camera.setFocusMode(AVCaptureFocusModeContinuousAutoFocus)
+            camera.setSubjectAreaChangeMonitoringEnabled(true)
+            camera.setFocusPointOfInterest(cgPoint)
+            camera.setCinematicVideoFixedFocusAtPoint(cgPoint)
+        }
+    }
+
+    fun clearFocus() {
+        if (currentCamera?.isFocusModeSupported(AVCaptureFocusModeContinuousAutoFocus) == true)
+            currentCamera?.focusMode = AVCaptureFocusModeContinuousAutoFocus
+
+
+        if (currentCamera?.isExposureModeSupported(AVCaptureExposureModeContinuousAutoExposure) == true)
+            currentCamera?.exposureMode = AVCaptureExposureModeContinuousAutoExposure
     }
 
     /**

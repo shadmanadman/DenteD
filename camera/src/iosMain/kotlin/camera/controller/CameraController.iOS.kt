@@ -1,7 +1,9 @@
 package camera.controller
 
 import kotlinx.atomicfu.atomic
+import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
+import model.FocusPoints
 import platform.AVFoundation.AVCaptureMetadataOutput
 import platform.AVFoundation.AVCaptureMetadataOutputObjectsDelegateProtocol
 import platform.AVFoundation.AVCaptureTorchMode
@@ -13,6 +15,8 @@ import platform.AVFoundation.AVCaptureVideoOrientationLandscapeLeft
 import platform.AVFoundation.AVCaptureVideoOrientationLandscapeRight
 import platform.AVFoundation.AVCaptureVideoOrientationPortrait
 import platform.AVFoundation.AVCaptureVideoOrientationPortraitUpsideDown
+import platform.CoreGraphics.CGPoint
+import platform.CoreGraphics.CGPointMake
 import platform.SharedImage
 import platform.UIKit.UIDevice
 import platform.UIKit.UIDeviceOrientation
@@ -103,10 +107,26 @@ actual class CameraController(
     actual fun stopSession() {
         customCameraController.stopSession()
     }
+
+    @OptIn(ExperimentalForeignApi::class)
+    actual suspend fun setFocus(focusPoints: FocusPoints): Boolean {
+        customCameraController.setFocus(focusPoints.toCGPoints())
+        return true
+    }
+
+    actual fun clearFocus(){
+        customCameraController.clearFocus()
+    }
+
+
     private fun TorchMode.toAVCaptureTorchMode(): AVCaptureTorchMode = when (this) {
         TorchMode.ON -> AVCaptureTorchModeOn
         TorchMode.OFF -> AVCaptureTorchModeOff
         TorchMode.AUTO -> AVCaptureTorchModeAuto
     }
 
+    @OptIn(ExperimentalForeignApi::class)
+    private fun FocusPoints.toCGPoints(): CValue<CGPoint> {
+        return CGPointMake(this.meteringPoint.x.toDouble(), this.meteringPoint.y.toDouble())
+    }
 }

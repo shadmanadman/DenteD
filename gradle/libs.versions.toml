@@ -10,6 +10,7 @@ androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
 composeMultiplatform = "1.9.3"
+concurrentFuturesKtx = "1.3.0"
 junit = "4.13.2"
 kotlin = "2.2.21"
 kotlin-coroutine = "1.10.2"
@@ -23,6 +24,7 @@ camerax = "1.5.2"
 atomicfu = "0.29.0"
 
 [libraries]
+androidx-concurrent-futures-ktx = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -38,6 +40,8 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 
 # Coroutines
 kotlin-coroutines = {module ="org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref ="kotlin-coroutine"}
+kotlin-coroutines-android = {module="org.jetbrains.kotlinx:kotlinx-coroutines-android" ,version.ref="kotlin-coroutine"}
+
 
 # Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
