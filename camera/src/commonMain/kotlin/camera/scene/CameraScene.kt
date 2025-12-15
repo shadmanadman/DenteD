@@ -23,8 +23,6 @@ import camera.viewmodel.CameraViewModel
 import camera.viewmodel.JawViewModel
 import model.CameraErrorState
 import model.JawSide
-import model.JawType
-import model.ToothBox
 import string.en.StringRes
 import theme.Secondary
 import theme.White
@@ -73,13 +71,16 @@ fun CameraScreen(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        // See result
+        // See result early
         if (acceptedTeeth.isNotEmpty())
             SeeResult(cameraViewModel, modifier = Modifier.align(Alignment.BottomCenter))
 
         // Detection completed
         if (allJawsCompleted)
-            ProcessSheet(jawViewModel.averageJawsProgress(), onSeeResultClicked = {}, onSelectToothClicked = {})
+            ProcessSheet(
+                jawViewModel.averageJawsProgress(),
+                onSeeResultClicked = {},
+                onSelectToothClicked = {})
     }
 }
 
@@ -106,22 +107,14 @@ fun SeeResult(cameraViewModel: CameraViewModel, modifier: Modifier) {
     }
 }
 
-private fun generateFocusPoint(
-    normalizedPadding: Float,
-    selectedJawType: JawType,
-    jawSide: JawSide,
-    visibleBoxes: List<ToothBox>,
-): List<FocusPoints> {
 
-    if (selectedJawType == JawType.FRONT || jawSide == JawSide.MIDDLE) {
-        resetFocus()
-        return emptyList()
-    }
 
-    return focusPointsForUpperAndLowerJaw(
-        normalizedPadding = normalizedPadding,
-        visibleBoxes = visibleBoxes,
-        previewView = previewView,
-    )
 
-}
+
+
+
+
+
+
+
+
