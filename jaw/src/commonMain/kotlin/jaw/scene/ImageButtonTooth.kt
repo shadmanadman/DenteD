@@ -1,41 +1,47 @@
 package jaw.scene
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import theme.Accent
 
 
 data class ToothSpec(
     val id: Int,
     val drawable: DrawableResource,
-    val indicator: DrawableResource,
     val angleDeg: Float,
     val rotation: Float = 180f,
 )
 
 @Composable
 fun ToothButtonWithIndicator(
-    id: Int,
-    drawableRes: DrawableResource,
-    indicatorRes: DrawableResource,
-    rotationDegrees: Float = 0f,
+    toothSpec: ToothSpec,
     modifier: Modifier = Modifier,
     onToothClicked: (Int) -> Unit
 ) {
@@ -50,24 +56,78 @@ fun ToothButtonWithIndicator(
         animationSpec = tween(durationMillis = 300)
     )
 
+
+
+
     Box(
         modifier = modifier
             .wrapContentSize()
-            .rotate(rotationDegrees)
+            .rotate(toothSpec.rotation)
             .scale(scale)
             .shadow(
                 elevation = elevation.dp,
                 shape = androidx.compose.foundation.shape.CircleShape
             )
-            .clickable(interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = true, radius = 40.dp)) {
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) {
                 isSelected = !isSelected
-                onToothClicked(id)
+                onToothClicked(toothSpec.id)
             }
     ) {
+
+
         Image(
-            painter = painterResource(drawableRes),
-            contentDescription = "Teeth $id Button",
+            painter = painterResource(toothSpec.drawable),
+            contentDescription = "Teeth ${toothSpec.id} Button",
+        )
+
+        PulseRing(
+            modifier = Modifier
+                .size(20.dp)
+                .align(Alignment.Center),
+            isActive = isSelected,
+        )
+    }
+
+}
+
+@Composable
+fun PulseRing(
+    modifier: Modifier = Modifier,
+    isActive: Boolean,
+    color: Color = Accent,
+    maxRadiusFraction: Float = 0.9f,
+    strokeWidth: Dp = 3.dp
+) {
+    if (!isActive) return
+
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1500,
+                easing = FastOutSlowInEasing
+            )
+        ),
+        label = "pulseProgress"
+    )
+
+    Canvas(modifier = modifier) {
+        val radius = lerp(
+            0f ,
+            maxRadiusFraction * size.minDimension,
+            progress
+        )
+
+        drawCircle(
+            color = color.copy(alpha = 1f - progress),
+            radius = radius,
+            style = Stroke(width = strokeWidth.toPx())
         )
     }
 }

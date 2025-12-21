@@ -1,6 +1,7 @@
 package jaw.scene
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,108 +51,92 @@ val rightTeethGroup = listOf(
     ToothSpec(
         id = 17,
         drawable = Res.drawable.ic_teeth_01,
-        indicator = Res.drawable.teeth_indicator_advanced_1,
         angleDeg = 0f,
     ),
     ToothSpec(
-        18,
-        Res.drawable.ic_teeth_02,
-        Res.drawable.teeth_indicator_advanced_2,
-        12f,
+        id = 18,
+        drawable = Res.drawable.ic_teeth_02,
+        angleDeg = 12f,
     ),
     ToothSpec(
-        19,
-        Res.drawable.ic_teeth_03,
-        Res.drawable.teeth_indicator_advanced_3,
-        23f,
+        id = 19,
+        drawable = Res.drawable.ic_teeth_03,
+        angleDeg = 23f,
     ),
     ToothSpec(
-        20,
-        Res.drawable.ic_teeth_04,
-        Res.drawable.teeth_indicator_advanced_4,
-        35f
+        id = 20,
+        drawable = Res.drawable.ic_teeth_04,
+        angleDeg = 35f
     ),
     ToothSpec(
-        21,
-        Res.drawable.ic_teeth_05,
-        Res.drawable.teeth_indicator_advanced_5,
-        44f,
+        id = 21,
+        drawable = Res.drawable.ic_teeth_05,
+        angleDeg = 44f,
     ),
     ToothSpec(
-        22,
-        Res.drawable.ic_teeth_06,
-        Res.drawable.teeth_indicator_advanced_6,
-        55f,
+        id = 22,
+        drawable = Res.drawable.ic_teeth_06,
+        angleDeg = 55f,
     ),
     ToothSpec(
-        23,
-        Res.drawable.ic_teeth_07,
-        Res.drawable.teeth_indicator_advanced_7,
-        67f,
+        id = 23,
+        drawable = Res.drawable.ic_teeth_07,
+        angleDeg = 67f,
     ),
     ToothSpec(
-        24,
-        Res.drawable.ic_teeth_08,
-        Res.drawable.teeth_indicator_advanced_8,
-        80f,
+        id = 24,
+        drawable = Res.drawable.ic_teeth_08,
+        angleDeg = 80f,
         rotation = 170f
     ),
 )
 
 val leftTeethGroup = listOf(
     ToothSpec(
-        25,
-        Res.drawable.ic_teeth_08,
-        Res.drawable.teeth_indicator_advanced_8,
-        96f,
+        id = 25,
+        drawable = Res.drawable.ic_teeth_08,
+        angleDeg = 96f,
         rotation = 198f
     ),
     ToothSpec(
-        26,
-        Res.drawable.ic_teeth_07,
-        Res.drawable.teeth_indicator_advanced_7,
-        111f,
+        id = 26,
+        drawable = Res.drawable.ic_teeth_07,
+        angleDeg = 111f,
         rotation = -110f
     ),
     ToothSpec(
-        27,
-        Res.drawable.ic_teeth_06,
-        Res.drawable.teeth_indicator_advanced_6,
-        124f,
+        id = 27,
+        drawable = Res.drawable.ic_teeth_06,
+        angleDeg = 124f,
         rotation = -90f
     ),
     ToothSpec(
-        28,
-        Res.drawable.ic_teeth_05,
-        Res.drawable.teeth_indicator_advanced_5,
-        135f,
+        id = 28,
+        drawable = Res.drawable.ic_teeth_05,
+        angleDeg = 135f,
         rotation = -70f
     ),
     ToothSpec(
-        29,
-        Res.drawable.ic_teeth_04,
-        Res.drawable.teeth_indicator_advanced_4,
-        145f,
+        id = 29,
+        drawable = Res.drawable.ic_teeth_04,
+        angleDeg = 145f,
         rotation = -50f
     ),
     ToothSpec(
-        30,
-        Res.drawable.ic_teeth_03,
-        Res.drawable.teeth_indicator_advanced_3,
-        157f,
+        id = 30,
+        drawable = Res.drawable.ic_teeth_03,
+        angleDeg = 157f,
         rotation = -30f
     ),
     ToothSpec(
         id = 31,
         drawable = Res.drawable.ic_teeth_02,
-        indicator = Res.drawable.teeth_indicator_advanced_2,
         angleDeg = 167f,
         rotation = -10f
     ),
     ToothSpec(
         id = 32,
         drawable = Res.drawable.ic_teeth_01,
-        indicator = Res.drawable.teeth_indicator_advanced_1,
         angleDeg = 180f,
         rotation = 0f
     ),
@@ -170,19 +155,22 @@ fun Density.polarOffset(radiusX: Dp, radiusY: Dp, angle: Float): IntOffset {
 @Preview
 @Composable
 fun JawIllustration() {
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Jaw(isUpper = true)
-        Jaw()
+    Box(contentAlignment = Alignment.Center) {
+        Column {
+            Jaw(isUpper = true)
+            Jaw()
+        }
+        JawGuideLine()
     }
 }
 
 @Composable
 fun Jaw(isUpper: Boolean = false) {
     val jawContainerDrawable = if (isUpper) Res.drawable.ic_upper_jaw else Res.drawable.ic_lower_jaw
+    val alignment = if (isUpper) Alignment.BottomCenter else Alignment.TopCenter
 
     BoxWithConstraints(modifier = Modifier.width(jawWidth).height(jawHeight)) {
-        val lowerJawTeeth = leftTeethGroup + rightTeethGroup
-        val density = LocalDensity.current
+
         Image(
             painter = painterResource(jawContainerDrawable),
             contentDescription = null,
@@ -190,15 +178,15 @@ fun Jaw(isUpper: Boolean = false) {
                 .size(width = jawWidth, height = jawHeight)
                 .align(Alignment.Center)
         )
+
         val radiusX = maxWidth * 0.42f
         val radiusY = maxHeight * 0.72f
-        val alignment = if (isUpper) Alignment.BottomCenter else Alignment.TopCenter
+        val lowerJawTeeth = leftTeethGroup + rightTeethGroup
+        val density = LocalDensity.current
+
         lowerJawTeeth.forEach { tooth ->
             ToothButtonWithIndicator(
-                id = tooth.id,
-                drawableRes = tooth.drawable,
-                indicatorRes = tooth.indicator,
-                rotationDegrees = tooth.rotation,
+                toothSpec = tooth,
                 onToothClicked = {},
                 modifier = Modifier
                     .graphicsLayer {
