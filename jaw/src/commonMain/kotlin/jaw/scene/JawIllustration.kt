@@ -44,8 +44,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.cos
 import kotlin.math.sin
 
-val jawWidth = 220.dp
-val jawHeight = 220.dp
+val jawIllustrationSize = 220.dp
 
 val rightTeethGroup = listOf(
     ToothSpec(
@@ -154,7 +153,7 @@ fun Density.polarOffset(radiusX: Dp, radiusY: Dp, angle: Float): IntOffset {
 
 @Preview
 @Composable
-fun JawIllustration() {
+fun JawIllustrationScene() {
     Box(contentAlignment = Alignment.Center) {
         Column {
             Jaw(isUpper = true)
@@ -168,14 +167,14 @@ fun JawIllustration() {
 fun Jaw(isUpper: Boolean = false) {
     val jawContainerDrawable = if (isUpper) Res.drawable.ic_upper_jaw else Res.drawable.ic_lower_jaw
     val alignment = if (isUpper) Alignment.BottomCenter else Alignment.TopCenter
-
-    BoxWithConstraints(modifier = Modifier.width(jawWidth).height(jawHeight)) {
+    val startPadding = if (isUpper) 0.dp else 6.dp
+    BoxWithConstraints(modifier = Modifier.size(jawIllustrationSize)) {
 
         Image(
             painter = painterResource(jawContainerDrawable),
             contentDescription = null,
             modifier = Modifier
-                .size(width = jawWidth, height = jawHeight)
+                .size(jawIllustrationSize)
                 .align(Alignment.Center)
         )
 
@@ -194,7 +193,7 @@ fun Jaw(isUpper: Boolean = false) {
                             scaleY = -1f
                     }
                     .align(alignment)
-                    .padding(top = 22.dp, start = 5.dp)
+                    .padding(top = 20.dp, start = startPadding)
                     .offset {
                         with(density) {
                             polarOffset(radiusX, radiusY, tooth.angleDeg)
