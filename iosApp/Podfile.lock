@@ -26,7 +26,7 @@ PODS:
   - TensorFlowLiteObjC/Privacy (2.17.0)
 
 DEPENDENCIES:
-  - detection (from `../detection`)
+  - detection (from `../feature/detection`)
 
 SPEC REPOS:
   trunk:
@@ -35,13 +35,13 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   detection:
-    :path: "../detection"
+    :path: "../feature/detection"
 
 SPEC CHECKSUMS:
-  detection: bdd72d88a50e16b0ea4655e883c39805b6557aa5
+  detection: 8cfd95f399082225885a52ab9cf2627788f29252
   TensorFlowLiteC: eac6d689a8d391d1b202dc59e3d9165ba64aaf73
   TensorFlowLiteObjC: 72e1fa903465cd6a8d3d614c1474c5aad7635bb7
 
-PODFILE CHECKSUM: 2baae2b3b6b83ae7e38f231c61f37551bc266d4d
+PODFILE CHECKSUM: e12e97e0067762e8a8a7675cc12bf363996a0e7c
 
 COCOAPODS: 1.16.2

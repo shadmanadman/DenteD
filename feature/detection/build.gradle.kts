@@ -21,7 +21,7 @@ kotlin {
         homepage = "detection"
         version = "1.2.0"
         ios.deploymentTarget = "16"
-        podfile = project.file("../iosApp/Podfile")
+        podfile = project.file("../../iosApp/Podfile")
 
         pod("TensorFlowLiteObjC", moduleName = "TFLTensorFlowLite")
         pod("TensorFlowLiteObjC/Metal") {
@@ -36,7 +36,7 @@ kotlin {
             baseName = "detection"
             isStatic = true
             linkerOpts(
-                project.file("../iosApp/Pods/TensorFlowLiteObjC/Frameworks").path.let { "-F$it" },
+                project.file("../../iosApp/Pods/TensorFlowLiteObjC/Frameworks").path.let { "-F$it" },
                 "-framework", "TensorFlowLiteObjC"
             )
         }

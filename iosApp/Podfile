@@ -1,5 +1,5 @@
 target 'iosApp' do
   use_frameworks!
   platform :ios, '16.0'
-  pod 'detection', :path => '../detection'
+  pod 'detection', :path => '../feature/detection'
 end

@@ -3,4 +3,4 @@ ${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteC/TensorFlowLiteC.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteC/TensorFlowLiteCCoreML.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteC/TensorFlowLiteCMetal.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteObjC/TFLTensorFlowLite.bundle
-${PODS_ROOT}/../../detection/build/compose/cocoapods/compose-resources
+${PODS_ROOT}/../../feature/detection/build/compose/cocoapods/compose-resources

@@ -29,11 +29,11 @@ dependencyResolutionManagement {
 }
 
 include(":root")
-include(":camera")
-include(":detection")
-include(":engine:twoD")
-include(":engine:threeD")
+include(":feature:camera")
+include(":feature:detection")
+include(":feature:engine:twoD")
+include(":feature:engine:threeD")
+include(":feature:jaw")
 include(":core")
 include(":config")
 include(":shared")
-include(":jaw")
