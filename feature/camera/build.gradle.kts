@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
 }
 
 kotlin {
+
     androidLibrary {
         namespace = "org.shad.adman.jaw.generation.camera"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -36,14 +38,16 @@ kotlin {
             implementation(libs.precompose.core)
             implementation(compose.material3)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
 
             implementation(libs.atomicfu)
 
             implementation(libs.kotlin.coroutines)
-            api(project(":shared"))
-            api(project(":feature:detection"))
+            implementation(project(":shared"))
+            implementation(project(":feature:detection"))
         }
         commonTest.dependencies {
         }
     }
 }
+

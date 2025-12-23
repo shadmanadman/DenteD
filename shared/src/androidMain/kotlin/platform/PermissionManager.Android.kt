@@ -16,11 +16,11 @@ import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
 
 @Composable
-actual fun createPermissionsManager(callback: PermissionCallback): PermissionsManager {
+actual fun createPermissionsManager(callback: PermissionCallback): PermissionHandler {
     return remember { PermissionsManager(callback) }
 }
 
-actual class PermissionsManager actual constructor(private val callback: PermissionCallback) :
+class PermissionsManager constructor(private val callback: PermissionCallback) :
     PermissionHandler {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable

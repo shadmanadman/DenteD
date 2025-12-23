@@ -38,7 +38,7 @@ EXTERNAL SOURCES:
     :path: "../feature/detection"
 
 SPEC CHECKSUMS:
-  detection: 8cfd95f399082225885a52ab9cf2627788f29252
+  detection: cae14532696c0e330e40595e44f17f5e21fd13f2
   TensorFlowLiteC: eac6d689a8d391d1b202dc59e3d9165ba64aaf73
   TensorFlowLiteObjC: 72e1fa903465cd6a8d3d614c1474c5aad7635bb7
 

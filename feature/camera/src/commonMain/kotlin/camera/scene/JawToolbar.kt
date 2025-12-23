@@ -38,11 +38,11 @@ import resource.DrawableRes
 import model.JawType
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.Accent
 import theme.Secondary
 import theme.White
 import theme.appTypography
-
 
 @Composable
 fun JawToolbar(

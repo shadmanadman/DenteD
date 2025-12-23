@@ -6,13 +6,11 @@ import android.graphics.Bitmap.createBitmap
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.hardware.camera2.CameraMetadata.LENS_FACING_BACK
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.MeteringPoint
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
@@ -26,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import model.FocusPoints
-import model.MeteringPointPlatform
 import platform.SharedImage
 import java.util.concurrent.Executors
 import kotlin.math.atan
@@ -68,7 +65,7 @@ actual class CameraController(
                     }
 
                 val cameraSelector = CameraSelector.Builder()
-                    .requireLensFacing(LENS_FACING_BACK)
+                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                     .build()
 
 

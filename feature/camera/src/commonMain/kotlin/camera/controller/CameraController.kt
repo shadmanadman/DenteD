@@ -3,7 +3,7 @@ package camera.controller
 import model.FocusPoints
 import platform.SharedImage
 
-expect class CameraController(){
+expect class CameraController{
     var onImageAvailable: ((SharedImage?) -> Unit)?
     fun setTorchMode(mode: TorchMode)
     suspend fun setFocus(focusPoints: FocusPoints): Boolean

@@ -20,13 +20,13 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
 
 @Composable
-actual fun createPermissionsManager(callback: PermissionCallback): PermissionsManager {
+actual fun createPermissionsManager(callback: PermissionCallback): PermissionHandler {
     return PermissionsManager(callback)
 }
 
-actual class PermissionsManager actual constructor(private val callback: PermissionCallback) : PermissionHandler {
+class PermissionsManager  constructor(private val callback: PermissionCallback) : PermissionHandler {
     @Composable
-    override fun AskPermission(permission: PermissionType) {
+     override fun AskPermission(permission: PermissionType) {
         when (permission) {
             PermissionType.CAMERA -> {
                 val status: AVAuthorizationStatus =
@@ -74,7 +74,7 @@ actual class PermissionsManager actual constructor(private val callback: Permiss
     }
 
     @Composable
-    override fun isPermissionGranted(permission: PermissionType): Boolean {
+     override fun isPermissionGranted(permission: PermissionType): Boolean {
         return when (permission) {
             PermissionType.CAMERA -> {
                 val status: AVAuthorizationStatus =
@@ -85,7 +85,7 @@ actual class PermissionsManager actual constructor(private val callback: Permiss
     }
 
     @Composable
-    override fun LaunchSettings() {
+     override fun LaunchSettings() {
         val url = NSURL.URLWithString(UIApplicationOpenSettingsURLString)
         UIApplication.sharedApplication.openURL(url!!)
     }

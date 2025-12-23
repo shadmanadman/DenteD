@@ -52,8 +52,9 @@ kotlin {
         }
         commonMain.dependencies {
             //implementation(libs.skiko)
-            api(compose.foundation)
-            api(project(":shared"))
+            implementation(compose.components.uiToolingPreview)
+            implementation(compose.foundation)
+            implementation(project(":shared"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

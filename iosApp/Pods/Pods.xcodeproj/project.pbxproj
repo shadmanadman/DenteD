@@ -9,12 +9,12 @@
 /* Begin PBXAggregateTarget section */
 		3F5F05E3067FB94AF7BD401F755F1758 /* detection */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 2038D0BB9EB8AA1A942DF30F03C189CE /* Build configuration list for PBXAggregateTarget "detection" */;
+			buildConfigurationList = 0F750A327983DE22EC1D6C0B89B11982 /* Build configuration list for PBXAggregateTarget "detection" */;
 			buildPhases = (
-				A3C3170FFEC3F518A05BA1059170D369 /* [CP-User] Build detection */,
+				60DC16032826B48B2493E05B80538FFF /* [CP-User] Build detection */,
 			);
 			dependencies = (
-				9198845279B14E5F24F50C775318A360 /* PBXTargetDependency */,
+				9B54DC7083B1722220E2E146185E1B48 /* PBXTargetDependency */,
 			);
 			name = detection;
 		};
@@ -129,7 +129,7 @@
 			remoteGlobalIDString = E84A5C2B777F1A7DFA141FF65E7EF5F8;
 			remoteInfo = "TensorFlowLiteC-TensorFlowLiteC";
 		};
-		FB422311324F70C5D1B2B9DFC1921919 /* PBXContainerItemProxy */ = {
+		E4A08AC1152E932DFBAC97B2B63849FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -822,7 +822,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/TensorFlowLiteC/TensorFlowLiteC-xcframeworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A3C3170FFEC3F518A05BA1059170D369 /* [CP-User] Build detection */ = {
+		60DC16032826B48B2493E05B80538FFF /* [CP-User] Build detection */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -830,7 +830,7 @@
 			name = "[CP-User] Build detection";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "                if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n                  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\"\"\n                  exit 0\n                fi\n                set -ev\n                REPO_ROOT=\"$PODS_TARGET_SRCROOT\"\n                \"$REPO_ROOT/../../gradlew\" -p \"$REPO_ROOT\" $KOTLIN_PROJECT_PATH:syncFramework                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME                     -Pkotlin.native.cocoapods.archs=\"$ARCHS\"                     -Pkotlin.native.cocoapods.configuration=\"$CONFIGURATION\"\n";
+			shellScript = "                if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n                    echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\"\"\n                    exit 0\n                fi\n                set -ev\n                REPO_ROOT=\"$PODS_TARGET_SRCROOT\"\n                \"$REPO_ROOT/../../gradlew\" -p \"$REPO_ROOT\" $KOTLIN_PROJECT_PATH:syncFramework                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME                     -Pkotlin.native.cocoapods.archs=\"$ARCHS\"                     -Pkotlin.native.cocoapods.configuration=\"$CONFIGURATION\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -928,11 +928,11 @@
 			target = 21565648B232EFAD1A63DF20EF09F461 /* TensorFlowLiteC-TensorFlowLiteCMetal */;
 			targetProxy = 0C1049F1CB4F523B875536B161600952 /* PBXContainerItemProxy */;
 		};
-		9198845279B14E5F24F50C775318A360 /* PBXTargetDependency */ = {
+		9B54DC7083B1722220E2E146185E1B48 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = TensorFlowLiteObjC;
 			target = 4B697A2500419F6CCC74F4EDC6DFEB75 /* TensorFlowLiteObjC */;
-			targetProxy = FB422311324F70C5D1B2B9DFC1921919 /* PBXContainerItemProxy */;
+			targetProxy = E4A08AC1152E932DFBAC97B2B63849FD /* PBXContainerItemProxy */;
 		};
 		D44CCBE63511A07C698A979AB1AF2AAC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1027,6 +1027,45 @@
 				SYMROOT = "${SRCROOT}/../build";
 			};
 			name = Release;
+		};
+		3E6409C2B085C5B212688A88A589090F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1B715201D47036CDCE8734E9AF8A6A73 /* detection.release.xcconfig */;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		43152521290790107E1C8F4B93843A00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 434D7D458A3DB695F72185E9154427DE /* detection.debug.xcconfig */;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		4A43D645E31FB6801294C1EE8D483CAA /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1203,26 +1242,6 @@
 			};
 			name = Debug;
 		};
-		B7C0A579B6E71C97539592D2CD41CE5A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1B715201D47036CDCE8734E9AF8A6A73 /* detection.release.xcconfig */;
-			buildSettings = {
-				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 16;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		CDF69033FDB43322CDAEE8209FD8C485 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1C188F6EF19CEF666506A735C7CC17F /* TensorFlowLiteC.release.xcconfig */;
@@ -1239,25 +1258,6 @@
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
-		};
-		DA35CD7384E6081879A0195B834ACBF4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 434D7D458A3DB695F72185E9154427DE /* detection.debug.xcconfig */;
-			buildSettings = {
-				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 16;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
 		};
 		DF46BE75E2215FAC025B3C1880728111 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1458,6 +1458,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0F750A327983DE22EC1D6C0B89B11982 /* Build configuration list for PBXAggregateTarget "detection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43152521290790107E1C8F4B93843A00 /* Debug */,
+				3E6409C2B085C5B212688A88A589090F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		12010DA428D4448CDA7179C091FA326F /* Build configuration list for PBXNativeTarget "TensorFlowLiteObjC-TFLTensorFlowLite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1472,15 +1481,6 @@
 			buildConfigurations = (
 				E39DA9A3973E6079FBACCAD0AF881DCA /* Debug */,
 				669FA70BC756379A19DBEC31303AFA2C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2038D0BB9EB8AA1A942DF30F03C189CE /* Build configuration list for PBXAggregateTarget "detection" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DA35CD7384E6081879A0195B834ACBF4 /* Debug */,
-				B7C0A579B6E71C97539592D2CD41CE5A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
