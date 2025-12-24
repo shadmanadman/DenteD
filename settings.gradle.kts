@@ -27,7 +27,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
+include(":androidApp")
 include(":root")
 include(":feature:camera")
 include(":feature:detection")
