@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import shared.resources.app_name
+import shared.theme.Transparent
 import shared.theme.appTypography
 import shared.ui.AnimatedRgbBorder
 import shared.ui.heartBeatScale
@@ -37,7 +38,7 @@ fun MainScenePreview(){
 @Composable
 fun MainScene(onNavigate:(String)->Unit) {
 
-    Box(modifier = Modifier.fillMaxSize().padding(18.dp)) {
+    Box(modifier = Modifier.fillMaxSize().background(Transparent).padding(18.dp)) {
         Text(
             modifier = Modifier.align(Alignment.TopCenter),
             text = stringResource(shared.resources.Res.string.app_name),

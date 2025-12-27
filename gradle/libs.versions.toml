@@ -25,7 +25,7 @@ litert = "2.1.0"
 accompanist-permissions = "0.37.3"
 camerax = "1.5.2"
 atomicfu = "0.29.0"
-
+guava = "33.0.0-android"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -41,6 +41,8 @@ androidx-compose-ui-tooling = {module = "androidx.compose.ui:ui-tooling" ,versio
 androidx-compose-ui-tooling-preview = {module = "androidx.compose.ui:ui-tooling-prteview" ,version.ref="androidx-compose-ui-tooling"}
 
 androidx-concurrent-futures-ktx = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
+
+guava-android = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }

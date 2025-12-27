@@ -34,6 +34,8 @@ fun Root() {
     PreComposeApp {
         val navigator = rememberNavigator()
         Box(modifier = Modifier.fillMaxSize()) {
+            RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
+
             NavHost(
                 navigator = navigator,
                 navTransition = NavTransition(),
@@ -46,7 +48,6 @@ fun Root() {
                 }
             }
 
-            RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
         }
     }
 }
@@ -88,6 +89,8 @@ private fun RootCameraPreview(cameraPreviewMode: CameraPreviewMode) {
 
     if (permissionsManager.isPermissionGranted(PermissionType.CAMERA).not())
         permissionsManager.AskPermission(PermissionType.CAMERA)
+    else
+        cameraPermissionState = true
 
     if (cameraPermissionState && (cameraPreviewMode == CameraPreviewMode.PreviewBlurred || cameraPreviewMode == CameraPreviewMode.Preview))
         Box(modifier = Modifier.fillMaxSize()) {
@@ -95,10 +98,5 @@ private fun RootCameraPreview(cameraPreviewMode: CameraPreviewMode) {
                 modifier = Modifier.fillMaxSize(),
                 cameraConfiguration = {},
                 onCameraControllerReady = {})
-            if (cameraPreviewMode == CameraPreviewMode.PreviewBlurred)
-                Box(
-                    modifier = Modifier.fillMaxSize().background(Black).alpha(0.5f)
-                        .blur(radius = 12.dp, edgeTreatment = BlurredEdgeTreatment.Rectangle)
-                )
         }
 }

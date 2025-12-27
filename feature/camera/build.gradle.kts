@@ -30,6 +30,7 @@ kotlin {
             implementation(libs.androidx.camera.core)
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.concurrent.futures.ktx)
+            implementation(libs.guava.android)
         }
         commonMain.dependencies {
             implementation(libs.precompose.core)

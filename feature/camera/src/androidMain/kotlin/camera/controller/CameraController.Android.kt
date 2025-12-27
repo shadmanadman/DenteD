@@ -12,6 +12,7 @@ import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
@@ -88,7 +89,7 @@ actual class CameraController(
                     }
 
 
-                val useCases = mutableListOf(preview!!, imageCapture!!)
+                val useCases = mutableListOf<UseCase>(preview!!)
                 imageAnalyzer?.let { useCases.add(it) }
 
 
