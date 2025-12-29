@@ -18,7 +18,8 @@ data class ApplicationTypography(
     val headline21: TextStyle,
     val headline22: TextStyle,
     val headline23: TextStyle,
-    val headline26: TextStyle
+    val headline26: TextStyle,
+    val headline30: TextStyle
 
 )
 
@@ -86,6 +87,10 @@ fun appTypography(): ApplicationTypography {
 
             fontWeight = FontWeight.Normal,
             fontSize = 26.sp
+        ),
+        headline30 = TextStyle(
+            fontWeight = FontWeight.Normal,
+            fontSize = 30.sp
         )
     )
 }

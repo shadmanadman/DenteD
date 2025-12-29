@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import camera.scene.CameraPreview
+import jaw.scene.SelectionScene
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -45,6 +46,9 @@ fun Root() {
                     MainScene(onNavigate = {
                         navigator.navigate(it)
                     })
+                }
+                scene(route = MainNav.selection){
+                    SelectionScene()
                 }
             }
 

@@ -39,42 +39,42 @@ val jawIllustrationSize = 220.dp
 
 val rightTeethGroup = listOf(
     ToothSpec(
-        id = 17,
+        id = 1,
         drawable = Res.drawable.ic_teeth_01,
         angleDeg = 0f,
     ),
     ToothSpec(
-        id = 18,
+        id = 2,
         drawable = Res.drawable.ic_teeth_02,
         angleDeg = 12f,
     ),
     ToothSpec(
-        id = 19,
+        id = 3,
         drawable = Res.drawable.ic_teeth_03,
         angleDeg = 23f,
     ),
     ToothSpec(
-        id = 20,
+        id = 4,
         drawable = Res.drawable.ic_teeth_04,
         angleDeg = 35f
     ),
     ToothSpec(
-        id = 21,
+        id = 5,
         drawable = Res.drawable.ic_teeth_05,
         angleDeg = 44f,
     ),
     ToothSpec(
-        id = 22,
+        id = 6,
         drawable = Res.drawable.ic_teeth_06,
         angleDeg = 55f,
     ),
     ToothSpec(
-        id = 23,
+        id = 7,
         drawable = Res.drawable.ic_teeth_07,
         angleDeg = 67f,
     ),
     ToothSpec(
-        id = 24,
+        id = 8,
         drawable = Res.drawable.ic_teeth_08,
         angleDeg = 80f,
         rotation = 170f
@@ -83,49 +83,49 @@ val rightTeethGroup = listOf(
 
 val leftTeethGroup = listOf(
     ToothSpec(
-        id = 25,
+        id = 9,
         drawable = Res.drawable.ic_teeth_08,
         angleDeg = 96f,
         rotation = 198f
     ),
     ToothSpec(
-        id = 26,
+        id = 10,
         drawable = Res.drawable.ic_teeth_07,
         angleDeg = 111f,
         rotation = -110f
     ),
     ToothSpec(
-        id = 27,
+        id = 11,
         drawable = Res.drawable.ic_teeth_06,
         angleDeg = 124f,
         rotation = -90f
     ),
     ToothSpec(
-        id = 28,
+        id = 12,
         drawable = Res.drawable.ic_teeth_05,
         angleDeg = 135f,
         rotation = -70f
     ),
     ToothSpec(
-        id = 29,
+        id = 13,
         drawable = Res.drawable.ic_teeth_04,
         angleDeg = 145f,
         rotation = -50f
     ),
     ToothSpec(
-        id = 30,
+        id = 14,
         drawable = Res.drawable.ic_teeth_03,
         angleDeg = 157f,
         rotation = -30f
     ),
     ToothSpec(
-        id = 31,
+        id = 15,
         drawable = Res.drawable.ic_teeth_02,
         angleDeg = 167f,
         rotation = -10f
     ),
     ToothSpec(
-        id = 32,
+        id = 16,
         drawable = Res.drawable.ic_teeth_01,
         angleDeg = 180f,
         rotation = 0f
@@ -173,6 +173,7 @@ fun Jaw(isUpper: Boolean = false) {
         val radiusX = maxWidth * 0.42f
         val radiusY = maxHeight * 0.72f
         val lowerJawTeeth = leftTeethGroup + rightTeethGroup
+
         val density = LocalDensity.current
 
         lowerJawTeeth.forEach { tooth ->
