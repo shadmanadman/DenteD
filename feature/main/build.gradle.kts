@@ -29,6 +29,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(libs.kotlin.coroutines)
+            implementation(libs.liquid)
 
             api(project(":shared"))
         }

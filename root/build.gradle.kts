@@ -28,10 +28,12 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.precompose.core)
+            implementation(libs.liquid)
 
             api(project(":shared"))
 
             implementation(project(":feature:main"))
+            implementation(project(":feature:jaw"))
             implementation(project(":feature:camera"))
         }
         commonTest.dependencies {

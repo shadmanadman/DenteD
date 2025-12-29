@@ -30,13 +30,13 @@ fun heartBeatScale(): State<Float> {
         while (true) {
             repeat(2) {
                 scale.animateTo(
-                    targetValue = 1.12f, animationSpec = tween(240, easing = LinearEasing)
+                    targetValue = 1.45f, animationSpec = tween(500, easing = LinearEasing)
                 )
                 scale.animateTo(
-                    targetValue = 1f, animationSpec = tween(140, easing = LinearEasing)
+                    targetValue = 1f, animationSpec = tween(durationMillis = 500, easing = LinearEasing)
                 )
             }
-            delay(1500)
+            delay(1000)
         }
     }
 
