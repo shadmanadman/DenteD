@@ -1,5 +1,5 @@
 package shared.navigation
 
 object CameraNav {
-    const val preview = "/preview"
+    const val detection = "/detection"
 }
