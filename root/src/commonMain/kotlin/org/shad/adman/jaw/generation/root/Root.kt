@@ -22,6 +22,8 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
+import org.koin.compose.KoinApplication
+import org.shad.adman.jaw.generation.root.di.appModules
 import shared.navigation.MainNav
 import shared.platform.PermissionCallback
 import shared.platform.PermissionStatus
@@ -32,37 +34,40 @@ import view.scene.MainScene
 
 @Composable
 fun Root() {
-    PreComposeApp {
-        val navigator = rememberNavigator()
-        Box(modifier = Modifier.fillMaxSize()) {
-            RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
+    KoinApplication(application = { modules(modules = appModules()) }) {
+        PreComposeApp {
+            val navigator = rememberNavigator()
+            Box(modifier = Modifier.fillMaxSize()) {
+                RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
 
-            NavHost(
-                navigator = navigator,
-                navTransition = NavTransition(),
-                initialRoute = MainNav.main
-            ) {
-                scene(route = MainNav.main) {
-                    MainScene(onNavigate = {
-                        navigator.navigate(it)
-                    })
+                NavHost(
+                    navigator = navigator,
+                    navTransition = NavTransition(),
+                    initialRoute = MainNav.main.path
+                ) {
+                    scene(route = MainNav.main.path) {
+                        MainScene(onNavigate = {
+                            navigator.navigate(it.path)
+                        })
+                    }
+                    scene(route = MainNav.selection.path) {
+                        SelectionScene()
+                    }
                 }
-                scene(route = MainNav.selection){
-                    SelectionScene()
-                }
+
             }
-
         }
     }
 }
 
-private enum class CameraPreviewMode{PreviewBlurred,Preview,NoPreview}
+private enum class CameraPreviewMode { PreviewBlurred, Preview, NoPreview }
+
 @Composable
 private fun defineCameraPreviewMode(navigator: Navigator): CameraPreviewMode {
     val currentEntry by navigator.currentEntry.collectAsState(null)
     val currentRoute = currentEntry?.route?.route
     return when (currentRoute) {
-        MainNav.main -> CameraPreviewMode.PreviewBlurred
+        MainNav.main.path -> CameraPreviewMode.PreviewBlurred
         else -> CameraPreviewMode.NoPreview
     }
 }

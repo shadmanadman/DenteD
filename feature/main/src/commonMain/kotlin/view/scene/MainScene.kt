@@ -8,48 +8,68 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradientShader
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import core.Route
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.liquid
 import io.github.fletchmckee.liquid.rememberLiquidState
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.KoinApplicationPreview
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 import shared.resources.Res
 import shared.resources.app_name
 import shared.resources.ic_tooth_gradiant
 import shared.theme.Transparent
 import shared.theme.appTypography
 import shared.ui.AnimatedRgbBorder
+import shared.ui.BaseUiEffect
 import shared.ui.heartBeatScale
+import view.viewmodel.MainViewModel
 
 @Preview
 @Composable
 fun MainScenePreview() {
-    MainScene(onNavigate = {})
+    KoinApplicationPreview(application = { modules(module { viewModelOf(::MainViewModel) }) }) {
+        MainScene(onNavigate = {})
+    }
 }
 
 @Composable
-fun MainScene(onNavigate: (String) -> Unit) {
+fun MainScene(
+    mainViewModel: MainViewModel = koinViewModel(),
+    onNavigate: (Route) -> Unit
+) {
+    val effects = mainViewModel.effect.receiveAsFlow()
 
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                is BaseUiEffect.InAppMessage -> TODO()
+                is BaseUiEffect.Navigate -> onNavigate(effect.route)
+            }
+        }.collect()
+    }
     Box(
         modifier = Modifier.fillMaxSize().background(Transparent)
             .padding(18.dp)
@@ -62,13 +82,15 @@ fun MainScene(onNavigate: (String) -> Unit) {
                 fontWeight = FontWeight.Bold
             )
         )
-        GoButton(modifier = Modifier.align(Alignment.Center)) {
+        GoButton(
+            modifier = Modifier.align(Alignment.Center),
+            onClick = mainViewModel::navigateToDetection
+        )
 
-        }
-
-        BeSelectiveButton(modifier = Modifier.align(Alignment.BottomCenter)) {
-
-        }
+        BeSelectiveButton(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onClick = mainViewModel::navigateToTeethSelection
+        )
     }
 }
 
@@ -94,7 +116,8 @@ fun GoButton(
         Image(
             contentDescription = null,
             painter = painterResource(Res.drawable.ic_tooth_gradiant),
-            modifier = Modifier.align(Alignment.Center).size(size/2).liquefiable(liquidState).alpha(0.6f)
+            modifier = Modifier.align(Alignment.Center).size(size / 2).liquefiable(liquidState)
+                .alpha(0.6f)
         )
 
         Box(
@@ -112,7 +135,7 @@ fun GoButton(
                         curve = 0.85f
                         saturation = 4f
                     }, contentAlignment = Alignment.Center
-            ){}
+            ) {}
         }
     }
 }
@@ -142,7 +165,8 @@ fun BeSelectiveButton(
 
             // Button body
             Box(
-                modifier = Modifier.padding(10.dp).padding(16.dp).liquid(liquidState), contentAlignment = Alignment.Center
+                modifier = Modifier.padding(10.dp).padding(16.dp).liquid(liquidState),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Be Selective",
@@ -150,30 +174,5 @@ fun BeSelectiveButton(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ShaderBackground(
-    liquidState: LiquidState,
-    modifier: Modifier = Modifier,
-) = Box(
-    modifier
-        .fillMaxSize()
-        .liquefiable(liquidState)
-        .background(rememberShaderBrush()),
-)
-
-
-@Composable
-fun rememberShaderBrush(
-    colors: List<Color> = listOf(MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.primary),
-): ShaderBrush = remember(colors) {
-    object : ShaderBrush() {
-        override fun createShader(size: androidx.compose.ui.geometry.Size): Shader = LinearGradientShader(
-            colors = colors,
-            from = Offset(size.width / 2f, 0f),
-            to = Offset(size.width / 2f, size.height),
-        )
     }
 }
