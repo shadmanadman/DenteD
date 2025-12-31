@@ -174,7 +174,6 @@ fun Jaw(isUpper: Boolean = false) {
         val radiusY = maxHeight * 0.72f
         val lowerJawTeeth = leftTeethGroup + rightTeethGroup
 
-        val density = LocalDensity.current
 
         lowerJawTeeth.forEach { tooth ->
             ToothButtonWithIndicator(
@@ -188,9 +187,7 @@ fun Jaw(isUpper: Boolean = false) {
                     .align(alignment)
                     .padding(top = 20.dp, start = startPadding)
                     .offset {
-                        with(density) {
-                            polarOffset(radiusX, radiusY, tooth.angleDeg)
-                        }
+                        polarOffset(radiusX, radiusY, tooth.angleDeg)
                     }
             )
         }
