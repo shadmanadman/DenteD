@@ -1,6 +1,10 @@
 package shared.navigation
 
-object MainNav {
-    const val main = "/main"
-    const val selection = "/selection"
+import core.Navigation
+import core.Route
+import shared.ui.BaseUiEffect
+
+object MainNav: Navigation {
+    val main = Route("main")
+    val selection = Route("selection")
 }

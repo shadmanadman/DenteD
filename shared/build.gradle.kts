@@ -35,6 +35,12 @@ kotlin {
             api(libs.runtime)
             api(libs.material3)
             api(libs.ui)
+
+            api(libs.koin.core)
+            api(libs.koin.compose)
+            api(libs.koin.viewmodel)
+
+            api(project(":core"))
         }
     }
 
