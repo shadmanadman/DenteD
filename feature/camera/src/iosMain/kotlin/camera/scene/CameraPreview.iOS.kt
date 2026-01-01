@@ -14,7 +14,7 @@ import platform.Foundation.NSNotificationCenter
 import platform.UIKit.UIDeviceOrientationDidChangeNotification
 
 /**
- * iOS-specific implementation of [CameraPreview].
+ * iOS-specific implementation of [camera.view.scene.CameraPreview].
  *
  * @param modifier Modifier to be applied to the camera preview.
  * @param cameraConfiguration Lambda to configure the [CameraControllerBuilder].

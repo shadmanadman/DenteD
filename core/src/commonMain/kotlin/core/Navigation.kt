@@ -10,7 +10,7 @@ interface Navigation {
  * Route information.
  *
  * @property name
- * @property fullPath
+ * @property path
  * @property scene
  * @constructor Create [Route]
  */

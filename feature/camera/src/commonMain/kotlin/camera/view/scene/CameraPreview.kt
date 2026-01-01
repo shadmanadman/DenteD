@@ -1,4 +1,4 @@
-package camera.scene
+package camera.view.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

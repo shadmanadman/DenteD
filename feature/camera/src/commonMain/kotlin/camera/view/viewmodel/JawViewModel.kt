@@ -253,7 +253,7 @@ class JawViewModel : ViewModel(){
 
     private fun checkAllJawsCompleted() {
         val allCompleted = _jawsProgressDic.value.values.all { it == 100 }
-        _allJawsCompleted.value = allCompleted
+//        _allJawsCompleted.value = allCompleted
     }
 
     private val _currentJawType = MutableStateFlow(JawType.UPPER)

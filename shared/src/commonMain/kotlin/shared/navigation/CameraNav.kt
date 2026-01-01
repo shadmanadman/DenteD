@@ -1,5 +1,8 @@
 package shared.navigation
 
-object CameraNav {
-    const val detection = "/detection"
+import core.Navigation
+import core.Route
+
+object CameraNav: Navigation {
+    val detection = Route("/detection")
 }

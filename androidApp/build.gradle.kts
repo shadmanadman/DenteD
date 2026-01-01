@@ -32,6 +32,7 @@ android {
 
 dependencies{
     implementation(libs.androidx.activity.compose)
+    implementation(libs.koin.android)
     implementation(project(":root"))
 }
 

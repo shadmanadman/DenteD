@@ -1,6 +1,5 @@
-package camera.scene
+package camera.view.scene
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,24 +15,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import camera.viewmodel.AnalyzerViewModel
+import camera.di.cameraModule
 import camera.viewmodel.CameraViewModel
 import camera.viewmodel.JawViewModel
 import shared.model.CameraErrorState
 import shared.model.JawSide
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.KoinApplicationPreview
+import org.koin.compose.viewmodel.koinViewModel
+import shared.resources.Res
 import shared.resources.see_result
 import shared.theme.Secondary
 import shared.theme.White
 import shared.theme.appTypography
+@Composable
+@Preview
+fun CameraScenePreview(){
+    KoinApplicationPreview(application = { modules(cameraModule) }) {
+        CameraScene()
+    }
+}
 
 @Composable
-fun CameraScreen(
-    analyzerViewModel: AnalyzerViewModel,
-    cameraViewModel: CameraViewModel,
-    jawViewModel: JawViewModel
+fun CameraScene(
+    cameraViewModel: CameraViewModel = koinViewModel(),
+    jawViewModel: JawViewModel = koinViewModel()
 ) {
     val selectedJawType by jawViewModel.currentJawType.collectAsState()
     val selectedJawSide by jawViewModel.currentJawSide.collectAsState()
@@ -55,7 +64,6 @@ fun CameraScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .zIndex(3f)
-                .background(color = Secondary)
         )
 
 
@@ -100,7 +108,7 @@ fun SeeResult(cameraViewModel: CameraViewModel, modifier: Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(shared.resources.Res.string.see_result),
+                text = stringResource(Res.string.see_result),
                 color = White,
                 style = appTypography().body14
             )

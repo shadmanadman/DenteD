@@ -1,4 +1,4 @@
-package camera.scene
+package camera.view.scene
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.TweenSpec
@@ -28,6 +28,7 @@ import shared.model.JawSide
 import shared.model.ToothDetectionStatus
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import shared.resources.Res
 import shared.resources.ic_detected_teeth_1
 import shared.resources.ic_detected_teeth_2
@@ -62,8 +63,7 @@ private const val ANIMATE_DURATION_FOR_JAW_SECTION = 400
 
 @Composable
 fun UpperJawTeeth(
-    jawViewModel: JawViewModel,
-    currentJawSide: JawSide = JawSide.LEFT
+    jawViewModel: JawViewModel = koinViewModel(),
 ) {
     val upperIllustrationTeeth by jawViewModel.upperIllustrationTeeth.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
@@ -71,16 +71,16 @@ fun UpperJawTeeth(
     upperIllustrationTeeth.forEach {
         when (upperIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
-            ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
-            null -> {}
+            ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
+            ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
+            null ->{}
         }
     }
 
     Box {
-        //JawSplitSection(currentJawSide = currentJawSide)
         LazyRow(
             modifier = Modifier
-                .height(50.dp)
+                .height(60.dp)
                 .width(300.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -105,7 +105,6 @@ fun UpperJawTeeth(
 @Composable
 fun LowerJawTeeth(
     jawViewModel: JawViewModel,
-    currentJawSide: JawSide = JawSide.LEFT
 ) {
     val lowerIllustrationTeeth by jawViewModel.lowerIllustrationTeeth.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
@@ -114,12 +113,12 @@ fun LowerJawTeeth(
         when (lowerIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
+            ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
             null -> {}
         }
     }
 
     Box {
-        //JawSplitSection(currentJawSide = currentJawSide)
         LazyRow(
             modifier = Modifier
                 .height(50.dp)
@@ -155,13 +154,12 @@ fun FrontTeeth(jawViewModel: JawViewModel) {
         when (frontIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
+            ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
             null -> {}
         }
     }
 
     Box {
-        //JawSplitSection(isFrontJaw = true, currentJawSide = JawSide.MIDDLE)
-
         LazyRow(
             modifier = Modifier
                 .height(50.dp)

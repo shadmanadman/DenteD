@@ -1,5 +1,6 @@
-package camera.scene
+package camera.view.scene
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -10,10 +11,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,12 +30,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import camera.di.cameraModule
 import camera.viewmodel.JawViewModel
 import shared.model.JawType
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.KoinApplicationPreview
+import org.koin.compose.viewmodel.koinViewModel
+import shared.resources.Res
 import shared.resources.ic_front_jaw
 import shared.resources.ic_lower_jaw
 import shared.resources.ic_upper_jaw
@@ -46,9 +50,16 @@ import shared.theme.White
 import shared.theme.appTypography
 
 @Composable
+@Preview
+fun JawToolbarPreview() {
+    KoinApplicationPreview(application = { modules(cameraModule) }) {
+        JawToolbar()
+    }
+}
+
+@Composable
 fun JawToolbar(
-    onJawSelected: (JawType) -> Unit,
-    jawViewModel: JawViewModel
+    jawViewModel: JawViewModel = koinViewModel()
 ) {
     val jawProgress by jawViewModel.jawsProgressDic.collectAsState()
     val selectedJaw by jawViewModel.currentJawType.collectAsState()
@@ -60,33 +71,29 @@ fun JawToolbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        // Jaw buttons
         JawButton(
-            jawImage = shared.resources.Res.drawable.ic_lower_jaw,
+            jawImage = Res.drawable.ic_lower_jaw,
             jawProgress = jawProgress[JawType.LOWER] ?: 0,
             isSelected = selectedJaw == JawType.LOWER,
             onJawSelected = {
-                onJawSelected(JawType.LOWER)
                 jawViewModel.changeDetectingJawType(JawType.LOWER)
             },
             isCompleted = jawProgress[JawType.LOWER] == 100
         )
         JawButton(
-            jawImage = shared.resources.Res.drawable.ic_front_jaw,
+            jawImage = Res.drawable.ic_front_jaw,
             jawProgress = jawProgress[JawType.FRONT] ?: 0,
             isSelected = selectedJaw == JawType.FRONT,
             onJawSelected = {
-                onJawSelected(JawType.FRONT)
                 jawViewModel.changeDetectingJawType(JawType.FRONT)
             },
             isCompleted = jawProgress[JawType.FRONT] == 100
         )
         JawButton(
-            jawImage = shared.resources.Res.drawable.ic_upper_jaw,
+            jawImage = Res.drawable.ic_upper_jaw,
             jawProgress = jawProgress[JawType.UPPER] ?: 0,
             isSelected = selectedJaw == JawType.UPPER,
             onJawSelected = {
-                onJawSelected(JawType.UPPER)
                 jawViewModel.changeDetectingJawType(JawType.UPPER)
             },
             isCompleted = jawProgress[JawType.UPPER] == 100
@@ -105,16 +112,14 @@ fun JawButton(
     isCompleted: Boolean
 ) {
 
-    // animations
     val alpha by animateFloatAsState(
         targetValue = if (isSelected) 1f else 0f,
         label = ""
     )
-    val offsetX by animateDpAsState(targetValue = if (isSelected) 0.dp else (5).dp, label = "")
 
     val shape = if (isSelected) RoundedCornerShape(15.dp) else CircleShape
 
-    val targetWidth = if (isSelected) 60.dp else 40.dp
+    val targetWidth = if (isSelected) 80.dp else 60.dp
     val animatedWidth by animateDpAsState(targetValue = targetWidth, label = "")
 
     Box(
@@ -128,7 +133,7 @@ fun JawButton(
                 interactionSource = remember { MutableInteractionSource() })
             .padding(end = 8.dp)
             .width(animatedWidth)
-            .height(40.dp)
+            .height(60.dp)
             .shadow(elevation = jawButtonShadow(isSelected), shape = RoundedCornerShape(10.dp))
             .clip(shape = shape)
             .background(color = White)
@@ -137,37 +142,34 @@ fun JawButton(
                 color = jawButtonBorderColor(isSelected, isCompleted),
                 shape = shape
             )
-
-
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .align(Alignment.Center),
         ) {
             Image(
                 modifier = Modifier
-                    .size(21.dp)
-                    .offset(x = offsetX),
+                    .size(30.dp),
                 painter = painterResource(jawImage),
                 colorFilter = ColorFilter.tint(
                     color = jawButtonTintColor(
                         isSelected,
                         isCompleted
-
                     )
                 ),
                 contentDescription = "upper jaw button"
             )
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp, top = 5.dp)
-                    .alpha(alpha),
-                text = "$jawProgress%",
-                style = appTypography().title15,
-                color = Secondary
-            )
+            AnimatedVisibility(isSelected) {
+                Text(
+                    modifier = Modifier
+                        .padding(start = 4.dp, top = 5.dp)
+                        .alpha(alpha),
+                    text = "$jawProgress%",
+                    style = appTypography().title18,
+                    color = Secondary
+                )
+            }
+
         }
     }
 }

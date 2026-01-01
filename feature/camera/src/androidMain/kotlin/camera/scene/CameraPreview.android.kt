@@ -14,7 +14,7 @@ import camera.controller.CameraController
 import com.kashif.cameraK.builder.createAndroidCameraControllerBuilder
 
 /**
- * Android-specific implementation of [CameraPreview].
+ * Android-specific implementation of [camera.view.scene.CameraPreview].
  *
  * @param modifier Modifier to be applied to the camera preview.
  * @param cameraConfiguration Lambda to configure the [CameraControllerBuilder].

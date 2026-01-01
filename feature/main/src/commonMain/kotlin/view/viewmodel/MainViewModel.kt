@@ -19,6 +19,6 @@ class MainViewModel : ViewModel() {
     }
 
     fun navigateToDetection(){
-        //effect.trySend(BaseUiEffect.Navigate(CameraNav.detection))
+        effect.trySend(BaseUiEffect.Navigate(CameraNav.detection))
     }
 }
