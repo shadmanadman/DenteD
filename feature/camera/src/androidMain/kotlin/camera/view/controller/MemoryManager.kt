@@ -1,8 +1,7 @@
-package camera.controller
+package camera.view.controller
 
 import android.app.ActivityManager
 import android.content.Context
-import android.os.Build
 import kotlinx.atomicfu.atomic
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock

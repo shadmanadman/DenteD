@@ -1,4 +1,4 @@
-package camera.controller
+package camera.view.controller
 
 import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.CValue

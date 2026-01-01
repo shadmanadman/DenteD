@@ -1,4 +1,4 @@
-package camera.controller
+package camera.view.controller
 
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi

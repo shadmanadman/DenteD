@@ -1,6 +1,4 @@
-package com.kashif.cameraK.builder
-
-import camera.builder.CameraControllerBuilder
+package camera.view.builder
 
 /**
  * Creates an iOS-specific [CameraControllerBuilder].

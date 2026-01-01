@@ -1,6 +1,5 @@
-package com.straiberry.android.checkup.checkup.advanced.presentation.ui.camera.helper
+package camera.view.controller
 
-import camera.controller.CameraController
 import shared.model.JawSide
 import kotlin.math.PI
 import kotlin.math.tan

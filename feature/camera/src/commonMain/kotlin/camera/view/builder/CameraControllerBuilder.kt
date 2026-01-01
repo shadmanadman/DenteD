@@ -1,7 +1,7 @@
-package camera.builder
+package camera.view.builder
 
-import camera.controller.CameraController
-import camera.controller.TorchMode
+import camera.view.controller.CameraController
+import camera.view.controller.TorchMode
 
 /**
  * Builder interface for constructing a [controller.CameraController] with customizable configurations and plugins.

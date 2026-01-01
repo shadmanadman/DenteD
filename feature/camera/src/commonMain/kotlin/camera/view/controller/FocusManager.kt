@@ -1,4 +1,4 @@
-package camera.controller
+package camera.view.controller
 
 import camera.viewmodel.CameraViewModel
 import camera.viewmodel.JawViewModel

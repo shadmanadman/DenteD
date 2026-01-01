@@ -1,4 +1,4 @@
-package camera.controller
+package camera.view.controller
 
 import shared.model.FocusPoints
 import shared.platform.SharedImage

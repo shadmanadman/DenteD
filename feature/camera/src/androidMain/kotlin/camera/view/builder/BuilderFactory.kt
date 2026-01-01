@@ -1,9 +1,8 @@
-package com.kashif.cameraK.builder
+package camera.view.builder
 
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import camera.builder.CameraControllerBuilder
 
 /**
  * Creates an Android-specific [CameraControllerBuilder].

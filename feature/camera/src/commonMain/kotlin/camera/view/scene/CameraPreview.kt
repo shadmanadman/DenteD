@@ -2,8 +2,8 @@ package camera.view.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import camera.builder.CameraControllerBuilder
-import camera.controller.CameraController
+import camera.view.builder.CameraControllerBuilder
+import camera.view.controller.CameraController
 
 
 /**

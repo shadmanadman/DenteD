@@ -1,4 +1,4 @@
-package camera.scene
+package camera.view.scene
 
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import camera.builder.CameraControllerBuilder
-import camera.controller.CameraController
-import com.kashif.cameraK.builder.createAndroidCameraControllerBuilder
+import camera.view.builder.CameraControllerBuilder
+import camera.view.controller.CameraController
+import camera.view.builder.createAndroidCameraControllerBuilder
 
 /**
- * Android-specific implementation of [camera.view.scene.CameraPreview].
+ * Android-specific implementation of [CameraPreview].
  *
  * @param modifier Modifier to be applied to the camera preview.
  * @param cameraConfiguration Lambda to configure the [CameraControllerBuilder].

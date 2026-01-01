@@ -1,4 +1,4 @@
-package camera.controller
+package camera.view.controller
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -21,6 +21,8 @@ import androidx.camera.view.PreviewView
 import androidx.concurrent.futures.await
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import camera.view.controller.CameraLens
+import camera.view.controller.TorchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
