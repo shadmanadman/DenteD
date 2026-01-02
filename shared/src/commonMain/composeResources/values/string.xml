@@ -7,4 +7,6 @@
     <string name="see_result">See Result</string>
     <string name="close">Close</string>
     <string name="only_observer_selected_teeth">Only observe selected teeth</string>
+    <string name="be_selective">Be Selective</string>
+    <string name="done">Done</string>
 </resources>

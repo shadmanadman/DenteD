@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import io.github.fletchmckee.liquid.rememberLiquidState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplicationPreview
@@ -39,11 +41,14 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import shared.resources.Res
 import shared.resources.app_name
+import shared.resources.be_selective
 import shared.resources.ic_tooth_gradiant
+import shared.theme.Black
 import shared.theme.Transparent
 import shared.theme.appTypography
 import shared.ui.AnimatedRgbBorder
 import shared.ui.BaseUiEffect
+import shared.ui.RgbBorderButton
 import shared.ui.heartBeatScale
 import view.viewmodel.MainViewModel
 
@@ -87,8 +92,9 @@ fun MainScene(
             onClick = mainViewModel::navigateToDetection
         )
 
-        BeSelectiveButton(
+        RgbBorderButton(
             modifier = Modifier.align(Alignment.BottomCenter),
+            text = Res.string.be_selective,
             onClick = mainViewModel::navigateToTeethSelection
         )
     }
@@ -136,43 +142,6 @@ fun GoButton(
                         saturation = 4f
                     }, contentAlignment = Alignment.Center
             ) {}
-        }
-    }
-}
-
-
-@Composable
-fun BeSelectiveButton(
-    modifier: Modifier = Modifier,
-    liquidState: LiquidState = rememberLiquidState(),
-    onClick: () -> Unit
-) {
-
-    Box(modifier = modifier.liquefiable(liquidState)) {
-        // RGB animated border
-        AnimatedRgbBorder(
-            modifier = Modifier.matchParentSize()
-        )
-
-        Box(
-            modifier = modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = true, radius = 20.dp)
-            ) {
-                onClick()
-            }, contentAlignment = Alignment.Center
-        ) {
-
-            // Button body
-            Box(
-                modifier = Modifier.padding(10.dp).padding(16.dp).liquid(liquidState),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Be Selective",
-                    style = appTypography().headline26.copy(color = Color.White)
-                )
-            }
         }
     }
 }

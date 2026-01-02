@@ -2,6 +2,7 @@ package org.shad.adman.jaw.generation.root
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,9 +10,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import camera.view.scene.CameraPreview
 import camera.view.scene.CameraScene
-import jaw.scene.SelectionScene
+import jaw.view.scene.SelectionScene
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -37,6 +39,7 @@ fun Root() {
                 RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
 
                 NavHost(
+                    modifier = Modifier.padding(top = 34.dp),
                     navigator = navigator,
                     navTransition = NavTransition(),
                     initialRoute = MainNav.main.path
@@ -49,7 +52,9 @@ fun Root() {
                     }
                     // Jaw selection
                     scene(route = MainNav.selection.path) {
-                        SelectionScene()
+                        SelectionScene(onNavigate = {
+                            navigator.navigate(it.path)
+                        })
                     }
                     // Camera
                     scene(route = CameraNav.detection.path) {
