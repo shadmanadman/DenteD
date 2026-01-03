@@ -75,7 +75,7 @@ fun SelectionScene(
         // Done
         RgbBorderButton(
             text = Res.string.done,
-            onClick = {}
+            onClick = jawSelectionViewModel::navigateToDetectionScene
         )
     }
 }

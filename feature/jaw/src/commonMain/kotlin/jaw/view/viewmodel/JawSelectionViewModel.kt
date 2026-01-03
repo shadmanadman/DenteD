@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import shared.model.ToothNumber
+import shared.navigation.CameraNav
 import shared.ui.BaseUiEffect
 
 class JawSelectionViewModel : ViewModel() {
@@ -18,6 +19,10 @@ class JawSelectionViewModel : ViewModel() {
 
     var effect = Channel<BaseUiEffect>(Channel.UNLIMITED)
         private set
+
+    fun navigateToDetectionScene() {
+        effect.trySend(BaseUiEffect.Navigate(CameraNav.detection))
+    }
 
     fun addSelectedTooth(toothNumber: ToothNumber) {
         _uiState.value.apply {
