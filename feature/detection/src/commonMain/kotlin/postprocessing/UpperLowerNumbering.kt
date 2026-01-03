@@ -136,13 +136,15 @@ object UpperLowerNumbering {
 
         // Ensure "3" exists in sortedEachCls and has at least 3 teeth
         sortedEachCls["3"]?.let { cls3 ->
-            if (cls3.getOrDefault("r", emptyList()).isEmpty() || (cls3.getOrDefault(
-                    "r",
-                    emptyList()
+            if (cls3.getValue("r").isNotEmpty() || (cls3.getValue(
+                    "r"
                 ).size < 3)
             ) {
-                sortedEachCls["3"]?.set("r",
-                    (MutableList(3 - (cls3.getOrDefault("r", emptyList()).size)) { -1 } + (cls3["r"]
+                sortedEachCls["3"]?.set(
+                    "r",
+                    (MutableList(
+                        3 - (cls3.getValue("r").size)
+                    ) { -1 } + (cls3["r"]
                         ?: emptyList())).toMutableList())
             }
         }
