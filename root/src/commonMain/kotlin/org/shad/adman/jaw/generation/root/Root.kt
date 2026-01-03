@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import camera.view.controller.TorchMode
 import camera.view.scene.CameraPreview
 import camera.view.scene.CameraScene
 import jaw.view.scene.SelectionScene
@@ -114,7 +115,10 @@ private fun RootCameraPreview(cameraPreviewMode: CameraPreviewMode) {
         Box(modifier = Modifier.fillMaxSize()) {
             CameraPreview(
                 modifier = Modifier.fillMaxSize(),
-                cameraConfiguration = {},
+                cameraConfiguration = {
+                    if (cameraPreviewMode == CameraPreviewMode.Preview)
+                        setTorchMode(TorchMode.ON)
+                },
                 onCameraControllerReady = {})
         }
 }
