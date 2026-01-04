@@ -51,7 +51,7 @@ fun RgbBorderButton(
                 indication = ripple(bounded = true, radius = 20.dp)
             ) {
                 onClick()
-            }.padding(10.dp).padding(16.dp),
+            }.padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(

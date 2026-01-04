@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -149,8 +150,8 @@ fun JawIllustrationScenePreview() {
 }
 
 @Composable
-fun JawIllustrationScene(onToothClicked: (ToothNumber) -> Unit) {
-    Box(contentAlignment = Alignment.Center) {
+fun JawIllustrationScene(modifier: Modifier= Modifier, onToothClicked: (ToothNumber) -> Unit) {
+    Box(modifier = modifier.scale(1.5f), contentAlignment = Alignment.Center) {
         Column {
             Jaw(isUpper = true, onToothClicked = onToothClicked)
             Jaw(onToothClicked = onToothClicked)

@@ -37,13 +37,16 @@ fun heartBeatScale(): State<Float> {
         while (true) {
             repeat(2) {
                 scale.animateTo(
-                    targetValue = 1.45f, animationSpec = tween(500, easing = LinearEasing)
+                    targetValue = 1.24f, animationSpec = tween(durationMillis = 150, easing = LinearEasing)
                 )
                 scale.animateTo(
-                    targetValue = 1f, animationSpec = tween(durationMillis = 500, easing = LinearEasing)
+                    targetValue = 1.48f, animationSpec = tween(delayMillis = 150, durationMillis = 150, easing = LinearEasing)
+                )
+                scale.animateTo(
+                    targetValue = 1f, animationSpec = tween(delayMillis = 300, durationMillis = 1500, easing = LinearEasing)
                 )
             }
-            delay(1000)
+            delay(1500)
         }
     }
 
@@ -62,7 +65,7 @@ fun AnimatedRgbBorder(
     val infiniteTransition = rememberInfiniteTransition(label = "rgb")
     val hue by infiniteTransition.animateFloat(
         initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing)
+            animation = tween(5000, easing = LinearEasing)
         ), label = "hue"
     )
 

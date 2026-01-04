@@ -77,6 +77,7 @@ private fun defineCameraPreviewMode(navigator: Navigator): CameraPreviewMode {
     val currentRoute = currentEntry?.route?.route
     return when (currentRoute) {
         MainNav.main.path -> CameraPreviewMode.PreviewBlurred
+        MainNav.selection.path -> CameraPreviewMode.PreviewBlurred
         CameraNav.detection.path -> CameraPreviewMode.Preview
         else -> CameraPreviewMode.NoPreview
     }
