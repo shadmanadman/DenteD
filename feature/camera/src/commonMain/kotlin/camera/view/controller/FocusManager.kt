@@ -1,11 +1,11 @@
 package camera.view.controller
 
-import camera.viewmodel.CameraViewModel
-import camera.viewmodel.JawViewModel
+import kotlinx.coroutines.channels.Channel
 import shared.ext.convertToJawStatus
 import shared.model.FocusPoints
 import shared.model.FocusSection
 import shared.model.JawSide
+import shared.model.JawSideStatus
 import shared.model.JawType
 import shared.model.MeteringPointPlatform
 import shared.model.ToothBox
@@ -149,28 +149,35 @@ object FocusManager {
         )
     }
 
+    private val nextSignal = Channel<Unit>(capacity = Channel.RENDEZVOUS)
+
+    suspend fun goNext() {
+        nextSignal.send(Unit)
+    }
 
     suspend fun startFocusingSequentially(
         focusPoints: List<FocusPoints>,
-        jawViewModel: JawViewModel,
-        cameraViewModel: CameraViewModel,
         selectedJawSide: JawSide,
-        selectedJawType: JawType
+        selectedJawType: JawType,
+        onSideAnalyzeStarted: (JawSideStatus) -> Unit,
+        onSideAnalyzeCompleted: (JawSideStatus) -> Unit,
+        onFocusSectionChanged: (FocusSection) -> Unit
     ) {
         var focusNumber = 0
 
-        jawViewModel.jawSideAnalyzeStarted(
-            currentJawSide = convertToJawStatus(
+        onSideAnalyzeStarted(
+            convertToJawStatus(
                 jawSide = selectedJawSide,
                 jawType = selectedJawType
             )
         )
 
         if (selectedJawSide == JawSide.MIDDLE || focusPoints.isEmpty()) {
-            cameraViewModel.changeFocusedSection(FocusSection.MIDDLE)
-            delay(WAIT_FOR_FOCUS_TO_FINISH)
-            jawViewModel.jawSideAnalyzeCompleted(
-                currentJawSide = convertToJawStatus(
+            onFocusSectionChanged(FocusSection.MIDDLE)
+            //delay(WAIT_FOR_FOCUS_TO_FINISH)
+            //resetFocus()
+            onSideAnalyzeCompleted(
+                convertToJawStatus(
                     jawSide = selectedJawSide,
                     jawType = selectedJawType
                 )
@@ -181,46 +188,29 @@ object FocusManager {
         while (focusNumber < focusPoints.size) {
             val focusItem = focusPoints[focusNumber]
 
-            blockGoNext()
+            nextSignal.receive()
             println("Focus started :${focusNumber}")
 
             // Wait for focus to complete
             //val focusSuccess = setFocus(cameraControl, focusItem.meteringPoint)
 
             if (true) {
-                cameraViewModel.changeFocusedSection(focusItem.focusSection)
+                onFocusSectionChanged(focusItem.focusSection)
 
                 goNext()
 
                 println("Focus finished :$focusNumber")
             }
-            suspendUntilNext()
             focusNumber++
         }
-        jawViewModel.jawSideAnalyzeCompleted(
-            currentJawSide = convertToJawStatus(
+        onSideAnalyzeCompleted(
+            convertToJawStatus(
                 jawSide = selectedJawSide,
                 jawType = selectedJawType
             )
         )
-        cameraViewModel.changeFocusedSection(FocusSection.MIDDLE)
+        onFocusSectionChanged(FocusSection.MIDDLE)
         //resetFocus()
-    }
-
-    var proceedToNext = false
-
-    suspend fun suspendUntilNext() {
-        suspendCancellableCoroutine { continuation ->
-            if (proceedToNext) continuation.resume(Unit)
-        }
-    }
-
-    private fun blockGoNext() {
-        proceedToNext = false
-    }
-
-    private fun goNext() {
-        proceedToNext = true
     }
 
     const val WAIT_FOR_FOCUS_TO_FINISH = 2000L

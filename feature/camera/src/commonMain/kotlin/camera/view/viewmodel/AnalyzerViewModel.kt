@@ -1,15 +1,28 @@
 package camera.viewmodel
 
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import detector.calculateNormalizedPadding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import litert.Litert
 import shared.model.JawType
 import postprocessing.NumberingResult
+import shared.ext.convertToJawStatus
+import shared.model.FocusSection
+import shared.model.FrameAnalyzeStatus
+import shared.model.JawSide
+import shared.model.JawSideStatus
+import kotlin.collections.set
 
 private const val SEGMENT_UPPER_MODEL_NAME = "detection_upper_float32.tflite"
 private const val SEGMENT_LOWER_MODEL_NAME = "detection_lower_float32.tflite"
 private const val SEGMENT_FRONT_MODEL_NAME = "detection_front_float32.tflite"
-private const val NORMALIZED_PADDING = 80f
 
 class AnalyzerViewModel : ViewModel() {
     private val detector = lazy { Litert }.value
@@ -37,15 +50,39 @@ class AnalyzerViewModel : ViewModel() {
         _numberingResult.value = numberingResult
     }
 
-    private val _normalizedPadding = MutableStateFlow(NORMALIZED_PADDING)
+    //save the status of analyzing for each side
+    private val _jawSideStatus = MutableStateFlow(
+        mapOf(
+            JawSideStatus.LOWER_LEFT to FrameAnalyzeStatus.None,
+            JawSideStatus.LOWER_RIGHT to FrameAnalyzeStatus.None,
+            JawSideStatus.LOWER_MIDDLE to FrameAnalyzeStatus.None,
+            JawSideStatus.UPPER_LEFT to FrameAnalyzeStatus.None,
+            JawSideStatus.UPPER_RIGHT to FrameAnalyzeStatus.None,
+            JawSideStatus.UPPER_MIDDLE to FrameAnalyzeStatus.None,
+            JawSideStatus.FRONT to FrameAnalyzeStatus.None,
+        )
+    )
 
-    fun getNormalizedPadding(): Float {
-        return _normalizedPadding.value
+    fun jawSideAnalyzeStarted(currentJawSide: JawSideStatus) {
+        println("Jaw side analyze started: $currentJawSide")
+        _jawSideStatus.value = _jawSideStatus.value.toMutableMap().apply {
+            this[currentJawSide] = FrameAnalyzeStatus.Started
+        }
     }
 
-    fun setNormalizedPadding(padding:Float){
-        _normalizedPadding.value = padding
+    fun jawSideAnalyzeCompleted(currentJawSide: JawSideStatus) {
+        println("Jaw side analyze completed: $currentJawSide")
+        _jawSideStatus.value = _jawSideStatus.value.toMutableMap().apply {
+            this[currentJawSide] = FrameAnalyzeStatus.Completed
+        }
     }
 
 
+    fun checkIfCurrentSideAnalyzeCompleted(jawSide: JawSide, jawType: JawType): Boolean {
+        val jawSideStatus = convertToJawStatus(jawSide, jawType)
+        return _jawSideStatus.value[jawSideStatus] == FrameAnalyzeStatus.Completed
+    }
+
+
+    private val _currentFocusSection = MutableStateFlow(FocusSection.MIDDLE)
 }

@@ -60,7 +60,7 @@ fun ImageBitmap.calculateNormalizedPadding(targetSize: Float = 640f): Float {
     val resizedWidth = this.width / scale
     val dx = (targetSize - resizedWidth) / 2f
 
-    return dx / targetSize   // normalized padding
+    return dx / targetSize
 }
 
 fun String.toToothNumber(): ToothNumber {

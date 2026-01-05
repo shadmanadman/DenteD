@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 
-fun ImageBitmap.resize(newWidth: Int, newHeight: Int): ImageBitmap {
+fun ImageBitmap.resize(newWidth: Int = 640, newHeight: Int = 640): ImageBitmap {
     val output = ImageBitmap(newWidth, newHeight)
     val canvas = Canvas(output)
 
