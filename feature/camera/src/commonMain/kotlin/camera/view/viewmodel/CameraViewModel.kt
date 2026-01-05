@@ -27,53 +27,41 @@ class CameraViewModel : ViewModel(){
         return _detectingStatus.value
     }
 
-    private val _currentFocusSection = MutableStateFlow(FocusSection.MIDDLE)
-
     fun changeFocusedSection(focusedSection: FocusSection) {
-        _currentFocusSection.value = focusedSection
+        _uiState.update { it.copy(currentFocusSection = focusedSection) }
     }
-
-    fun getCurrentFocusSection(): FocusSection {
-        return _currentFocusSection.value
-    }
-
 
     /**
      * Analyze focused frame and find acceptable tooth. if the frame contains at least one
      * clear tooth we hold and save the frame.
      */
-    private val _acceptedTeeth = MutableStateFlow(mutableListOf<ToothNumber>())
-    val acceptedTeeth = _acceptedTeeth.asStateFlow()
 
-    private val _acceptedTeethTemp = MutableStateFlow(mutableListOf<ToothNumber>())
-
-    private val _acceptedFrames = MutableStateFlow(AcceptedFrame())
-    val acceptedFrames = _acceptedFrames.asStateFlow()
-
-    private val calibratedClarityLevel = mutableDoubleStateOf(0.0)
+    private val acceptedTeethTemp = mutableListOf<ToothNumber>()
 
     private fun addAcceptedTeethToTemp(toothNumbers: List<ToothNumber>) {
-        _acceptedTeethTemp.update { currentList ->
-            currentList.toMutableList().apply {
-                addAll(toothNumbers.filter { it !in currentList })
-            }
-        }
+        acceptedTeethTemp.addAll(toothNumbers.filter { it !in acceptedTeethTemp })
         println("This are the accepted tooth:$toothNumbers")
     }
 
-    private fun addAcceptedTooth() {
-        _acceptedTeeth.update { currentList ->
-            currentList.toMutableList().apply {
-                addAll(_acceptedTeethTemp.value.filter { it !in currentList })
-            }
+    private fun updateAcceptedTooth() {
+        _uiState.update { uiState ->
+            uiState.copy(
+                acceptedTeeth = uiState.acceptedTeeth.toMutableList().apply {
+                    addAll(acceptedTeethTemp.filter { it !in uiState.acceptedTeeth })
+                }
+            )
         }
     }
 
+    private val calibratedClarityLevel = mutableDoubleStateOf(0.0)
 
 
-
-    private val _numberingResult = MutableStateFlow(NumberingResult())
-    val numberingResult = _numberingResult.asStateFlow()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun processNormalizedPadding(resizedBitmap: ImageBitmap) {
+        viewModelScope.launch {
+            normalizedPadding = resizedBitmap.calculateNormalizedPadding()
+        }
+    }
 
     private val _normalizedPadding = MutableStateFlow(80f)
     val normalizedPadding = _normalizedPadding.asStateFlow()

@@ -2,6 +2,7 @@ package camera.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import camera.view.contract.JawUiState
 import detector.SideDetector.getIncompleteSide
 import shared.ext.convertToJawStatus
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import shared.model.FrameAnalyzeStatus
 import shared.model.JawSide
@@ -20,10 +22,12 @@ import kotlin.collections.set
 
 typealias JawProgress = Map<JawType, Int>
 
-class JawViewModel : ViewModel(){
+class JawViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(JawUiState())
+    val uiState: StateFlow<JawUiState> = _uiState.asStateFlow()
 
-    private val _upperIllustrationTeeth = MutableStateFlow(
-        mapOf(
+    init {
+        _uiState.value.upperIllustrationTeeth = mapOf(
             ToothNumber.UL8 to ToothDetectionStatus.INITIAL,
             ToothNumber.UL7 to ToothDetectionStatus.INITIAL,
             ToothNumber.UL6 to ToothDetectionStatus.INITIAL,
@@ -41,12 +45,9 @@ class JawViewModel : ViewModel(){
             ToothNumber.UR7 to ToothDetectionStatus.INITIAL,
             ToothNumber.UR8 to ToothDetectionStatus.INITIAL
         )
-    )
-    val upperIllustrationTeeth: StateFlow<Map<ToothNumber, ToothDetectionStatus>> =
-        _upperIllustrationTeeth
 
-    private val _lowerIllustrationTeeth = MutableStateFlow(
-        mapOf(
+
+        _uiState.value.lowerIllustrationTeeth = mapOf(
             ToothNumber.LL8 to ToothDetectionStatus.INITIAL,
             ToothNumber.LL7 to ToothDetectionStatus.INITIAL,
             ToothNumber.LL6 to ToothDetectionStatus.INITIAL,
@@ -64,13 +65,8 @@ class JawViewModel : ViewModel(){
             ToothNumber.LR7 to ToothDetectionStatus.INITIAL,
             ToothNumber.LR8 to ToothDetectionStatus.INITIAL
         )
-    )
-    val lowerIllustrationTeeth: StateFlow<Map<ToothNumber, ToothDetectionStatus>> =
-        _lowerIllustrationTeeth
 
-
-    private val _frontIllustrationTeeth = MutableStateFlow(
-        mapOf(
+        _uiState.value.frontIllustrationTeeth = mapOf(
             ToothNumber.LR3 to ToothDetectionStatus.INITIAL,
             ToothNumber.LR2 to ToothDetectionStatus.INITIAL,
             ToothNumber.LR1 to ToothDetectionStatus.INITIAL,
@@ -84,9 +80,7 @@ class JawViewModel : ViewModel(){
             ToothNumber.UL2 to ToothDetectionStatus.INITIAL,
             ToothNumber.UL3 to ToothDetectionStatus.INITIAL,
         )
-    )
-    val frontIllustrationTeeth: StateFlow<Map<ToothNumber, ToothDetectionStatus>> =
-        _frontIllustrationTeeth
+    }
 
     private val lowerLeftSide = listOf(
         ToothNumber.LL8,
@@ -152,123 +146,36 @@ class JawViewModel : ViewModel(){
         ToothNumber.UL3
     )
 
-    /**
-     * save the status of analyzing for each side
-     */
-    private val _jawSideStatus = MutableStateFlow(
-        mapOf(
-            JawSideStatus.LOWER_LEFT to FrameAnalyzeStatus.None,
-            JawSideStatus.LOWER_RIGHT to FrameAnalyzeStatus.None,
-            JawSideStatus.LOWER_MIDDLE to FrameAnalyzeStatus.None,
-            JawSideStatus.UPPER_LEFT to FrameAnalyzeStatus.None,
-            JawSideStatus.UPPER_RIGHT to FrameAnalyzeStatus.None,
-            JawSideStatus.UPPER_MIDDLE to FrameAnalyzeStatus.None,
-            JawSideStatus.FRONT to FrameAnalyzeStatus.None,
-        )
-    )
-
     fun jawSideAnalyzeStarted(currentJawSide: JawSideStatus) {
         println("Jaw side analyze started: $currentJawSide")
-        _jawSideStatus.value = _jawSideStatus.value.toMutableMap().apply {
-            this[currentJawSide] = FrameAnalyzeStatus.Started
+        _uiState.update {
+            it.copy(jawSideAnalyzeState = it.jawSideAnalyzeState.toMutableMap().apply {
+                this[currentJawSide] = FrameAnalyzeStatus.Started
+            })
         }
     }
 
     fun jawSideAnalyzeCompleted(currentJawSide: JawSideStatus) {
         println("Jaw side analyze completed: $currentJawSide")
-        _jawSideStatus.value = _jawSideStatus.value.toMutableMap().apply {
-            this[currentJawSide] = FrameAnalyzeStatus.Completed
+        _uiState.update {
+            it.copy(jawSideAnalyzeState = it.jawSideAnalyzeState.toMutableMap().apply {
+                this[currentJawSide] = FrameAnalyzeStatus.Completed
+            })
         }
     }
-
 
     fun checkIfCurrentSideAnalyzeCompleted(jawSide: JawSide, jawType: JawType): Boolean {
         val jawSideStatus = convertToJawStatus(jawSide, jawType)
-        return _jawSideStatus.value[jawSideStatus] == FrameAnalyzeStatus.Completed
+        return _uiState.value.jawSideAnalyzeState[jawSideStatus] == FrameAnalyzeStatus.Completed
     }
-
-    private val _jawsProgressDic = MutableStateFlow(
-        mapOf(
-            JawType.UPPER to 0,
-            JawType.LOWER to 0,
-            JawType.FRONT to 0
-        )
-    )
-    val jawsProgressDic = _jawsProgressDic.asStateFlow()
-
-    fun averageJawsProgress(): Int {
-        return _jawsProgressDic.value.values.average().toInt()
-    }
-    init {
-        val upperJawTeethCount = 16
-        val lowerJawTeethCount = 16
-        val frontJawTeethCount = 12
-
-        viewModelScope.launch {
-            _upperIllustrationTeeth
-                .map { newVal ->
-                    val determinedItemCount =
-                        newVal.filter { it.value == ToothDetectionStatus.DETECTED }.count()
-                    100 * determinedItemCount / upperJawTeethCount
-                }
-                .collectLatest { progress ->
-                    _jawsProgressDic.value = _jawsProgressDic.value.toMutableMap().apply {
-                        this[JawType.UPPER] = progress
-                    }
-                    checkAllJawsCompleted()
-                }
-        }
-
-        viewModelScope.launch {
-            _lowerIllustrationTeeth
-                .map { newVal ->
-                    val determinedItemCount =
-                        newVal.filter { it.value == ToothDetectionStatus.DETECTED }.count()
-                    100 * determinedItemCount / lowerJawTeethCount
-                }
-                .collectLatest { progress ->
-                    _jawsProgressDic.value = _jawsProgressDic.value.toMutableMap().apply {
-                        this[JawType.LOWER] = progress
-                    }
-                    checkAllJawsCompleted()
-                }
-        }
-
-        viewModelScope.launch {
-            _frontIllustrationTeeth.map { newVal ->
-                val determinedItemCount =
-                    newVal.filter { it.value == ToothDetectionStatus.DETECTED }.count()
-                100 * determinedItemCount / frontJawTeethCount
-            }.collectLatest { progress ->
-                _jawsProgressDic.value = _jawsProgressDic.value.toMutableMap().apply {
-                    this[JawType.FRONT] = progress
-                }
-                checkAllJawsCompleted()
-            }
-        }
-    }
-
-    private val _allJawsCompleted = MutableStateFlow(false)
-    val allJawsCompleted = _allJawsCompleted.asStateFlow()
-
-    private fun checkAllJawsCompleted() {
-        val allCompleted = _jawsProgressDic.value.values.all { it == 100 }
-//        _allJawsCompleted.value = allCompleted
-    }
-
-    private val _currentJawType = MutableStateFlow(JawType.UPPER)
-    val currentJawType = _currentJawType.asStateFlow()
 
     fun changeDetectingJawType(jawType: JawType) {
-        _currentJawType.value = jawType
+        _uiState.update { it.copy(jawType = jawType) }
         getIncompleteSide(jawType)?.let { changeDetectingJawSide(it) }
     }
 
-    private val _currentJawSide = MutableStateFlow(JawSide.LEFT)
-    val currentJawSide = _currentJawSide.asStateFlow()
-
     fun changeDetectingJawSide(jawSide: JawSide) {
-        _currentJawSide.value = jawSide
+        _uiState.update { it.copy(jawSide = jawSide) }
         println("current jaw side is:${jawSide}")
     }
 
@@ -277,82 +184,82 @@ class JawViewModel : ViewModel(){
      * Updating the accepted teeth for each jaw
      */
     fun updateAcceptedTeeth(acceptedTeeth: List<ToothNumber>, jawType: JawType, jawSide: JawSide) {
+        val upperJawTeethCount = 16
+        val lowerJawTeethCount = 16
+        val frontJawTeethCount = 12
 
-        when (jawType) {
-            JawType.UPPER -> {
-                when (jawSide) {
-                    JawSide.LEFT -> _upperIllustrationTeeth.value =
-                        _upperIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && upperLeftSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
+        _uiState.update { state ->
 
-                    JawSide.RIGHT -> _upperIllustrationTeeth.value =
-                        _upperIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && upperRightSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
-
-                    JawSide.MIDDLE -> _upperIllustrationTeeth.value =
-                        _upperIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && upperMiddleSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
-                }
-
-            }
-
-            JawType.LOWER -> {
-                when (jawSide) {
-                    JawSide.LEFT -> _lowerIllustrationTeeth.value =
-                        _lowerIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && lowerLeftSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
-
-                    JawSide.RIGHT -> _lowerIllustrationTeeth.value =
-                        _lowerIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && lowerRightSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
-
-                    JawSide.MIDDLE -> _lowerIllustrationTeeth.value =
-                        _lowerIllustrationTeeth.value.toMutableMap().apply {
-                            acceptedTeeth.forEach {
-                                if (this.containsKey(it) && lowerMiddleSide.contains(it)) {
-                                    this[it] = ToothDetectionStatus.DETECTED
-                                }
-                            }
-                        }
-                }
-            }
-
-            JawType.FRONT -> {
-                _frontIllustrationTeeth.value = _frontIllustrationTeeth.value.toMutableMap().apply {
-                    acceptedTeeth.forEach {
-                        if (this.containsKey(it) && frontSide.contains(it)) {
-                            this[it] = ToothDetectionStatus.DETECTED
+            fun Map<ToothNumber, ToothDetectionStatus>.applyAccepted(
+                allowed: List<ToothNumber>
+            ): Map<ToothNumber, ToothDetectionStatus> =
+                toMutableMap().apply {
+                    acceptedTeeth.forEach { tooth ->
+                        if (containsKey(tooth) && allowed.contains(tooth)) {
+                            this[tooth] = ToothDetectionStatus.DETECTED
                         }
                     }
                 }
+
+            val updatedState = when (jawType) {
+
+                JawType.UPPER -> state.copy(
+                    upperIllustrationTeeth = state.upperIllustrationTeeth.applyAccepted(
+                        when (jawSide) {
+                            JawSide.LEFT -> upperLeftSide
+                            JawSide.RIGHT -> upperRightSide
+                            JawSide.MIDDLE -> upperMiddleSide
+                        }
+                    )
+                )
+
+                JawType.LOWER -> state.copy(
+                    lowerIllustrationTeeth = state.lowerIllustrationTeeth.applyAccepted(
+                        when (jawSide) {
+                            JawSide.LEFT -> lowerLeftSide
+                            JawSide.RIGHT -> lowerRightSide
+                            JawSide.MIDDLE -> lowerMiddleSide
+                        }
+                    )
+                )
+
+                JawType.FRONT -> state.copy(
+                    frontIllustrationTeeth = state.frontIllustrationTeeth.applyAccepted(
+                        frontSide
+                    )
+                )
             }
+
+            val progress = mapOf(
+                JawType.UPPER to calculateProgress(
+                    updatedState.upperIllustrationTeeth,
+                    upperJawTeethCount
+                ),
+                JawType.LOWER to calculateProgress(
+                    updatedState.lowerIllustrationTeeth,
+                    lowerJawTeethCount
+                ),
+                JawType.FRONT to calculateProgress(
+                    updatedState.frontIllustrationTeeth,
+                    frontJawTeethCount
+                )
+            )
+
+            updatedState.copy(
+                jawProgress = progress,
+                allJawsCompleted = progress.values.all { it == 100 },
+                averageJawsProgress = progress.values.average().toInt()
+            )
         }
 
         getIncompleteSide(jawType)?.let { changeDetectingJawSide(it) }
+    }
+
+    private fun calculateProgress(
+        teeth: Map<ToothNumber, ToothDetectionStatus>,
+        totalCount: Int
+    ): Int {
+        val detected = teeth.count { it.value == ToothDetectionStatus.DETECTED }
+        return if (totalCount == 0) 0 else (100 * detected / totalCount)
     }
 }

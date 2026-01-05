@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.camera
 
 
 import androidx.compose.runtime.Composable
@@ -18,7 +18,7 @@ import platform.UIKit.UIDeviceOrientationDidChangeNotification
  *
  * @param modifier Modifier to be applied to the camera preview.
  * @param cameraConfiguration Lambda to configure the [CameraControllerBuilder].
- * @param onCameraControllerReady Callback invoked with the initialized [camera.view.controller.CameraController].
+ * @param onCameraControllerReady Callback invoked with the initialized [CameraController].
  */
 @Composable
 actual fun ExpectCameraPreview(

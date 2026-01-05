@@ -3,15 +3,12 @@ package camera.view.controller
 import camera.viewmodel.CameraViewModel
 import camera.viewmodel.JawViewModel
 import shared.ext.convertToJawStatus
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.suspendCancellableCoroutine
 import shared.model.FocusPoints
 import shared.model.FocusSection
 import shared.model.JawSide
 import shared.model.JawType
 import shared.model.MeteringPointPlatform
 import shared.model.ToothBox
-import kotlin.coroutines.resume
 
 object FocusManager {
     private fun changeFocusPoint(

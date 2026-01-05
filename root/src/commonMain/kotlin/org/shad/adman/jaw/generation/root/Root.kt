@@ -11,9 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import camera.view.controller.CameraController
 import camera.view.controller.TorchMode
-import camera.view.scene.CameraPreview
-import camera.view.scene.CameraScene
+import camera.view.scene.camera.CameraPreview
+import camera.view.scene.camera.CameraScene
 import jaw.view.scene.SelectionScene
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
@@ -35,9 +36,14 @@ fun Root() {
     KoinApplication(application = { modules(modules = appModules()) }) {
         PreComposeApp {
             val navigator = rememberNavigator()
-
+            var cameraController: CameraController? = null
             Box(modifier = Modifier.fillMaxSize()) {
-                RootCameraPreview(cameraPreviewMode = defineCameraPreviewMode(navigator))
+
+                RootCameraPreview(
+                    cameraPreviewMode = defineCameraPreviewMode(navigator),
+                    onCameraControllerReady = {
+                        cameraController = it
+                    })
 
                 NavHost(
                     modifier = Modifier.padding(top = 34.dp),
@@ -59,7 +65,7 @@ fun Root() {
                     }
                     // Camera
                     scene(route = CameraNav.detection.path) {
-                        CameraScene()
+                        CameraScene(cameraController)
                     }
 
                 }
@@ -83,8 +89,14 @@ private fun defineCameraPreviewMode(navigator: Navigator): CameraPreviewMode {
     }
 }
 
+/**
+ * We are using the camera preview across multiple screens, so it make sense to have it right at root.
+ */
 @Composable
-private fun RootCameraPreview(cameraPreviewMode: CameraPreviewMode) {
+private fun RootCameraPreview(
+    cameraPreviewMode: CameraPreviewMode,
+    onCameraControllerReady: (CameraController) -> Unit
+) {
     var cameraPermissionState by remember { mutableStateOf(false) }
 
     val permissionsManager = createPermissionsManager(object : PermissionCallback {
@@ -120,6 +132,7 @@ private fun RootCameraPreview(cameraPreviewMode: CameraPreviewMode) {
                     if (cameraPreviewMode == CameraPreviewMode.Preview)
                         setTorchMode(TorchMode.ON)
                 },
-                onCameraControllerReady = {})
+                onCameraControllerReady = onCameraControllerReady
+            )
         }
 }

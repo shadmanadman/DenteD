@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.jaw
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -61,8 +61,7 @@ fun JawToolbarPreview() {
 fun JawToolbar(
     jawViewModel: JawViewModel = koinViewModel()
 ) {
-    val jawProgress by jawViewModel.jawsProgressDic.collectAsState()
-    val selectedJaw by jawViewModel.currentJawType.collectAsState()
+    val uiState by jawViewModel.uiState.collectAsState()
 
     Row(
         modifier = Modifier
@@ -73,30 +72,30 @@ fun JawToolbar(
     ) {
         JawButton(
             jawImage = Res.drawable.ic_lower_jaw,
-            jawProgress = jawProgress[JawType.LOWER] ?: 0,
-            isSelected = selectedJaw == JawType.LOWER,
+            jawProgress = uiState.jawProgress[JawType.LOWER] ?: 0,
+            isSelected = uiState.jawType == JawType.LOWER,
             onJawSelected = {
                 jawViewModel.changeDetectingJawType(JawType.LOWER)
             },
-            isCompleted = jawProgress[JawType.LOWER] == 100
+            isCompleted = uiState.jawProgress[JawType.LOWER] == 100
         )
         JawButton(
             jawImage = Res.drawable.ic_front_jaw,
-            jawProgress = jawProgress[JawType.FRONT] ?: 0,
-            isSelected = selectedJaw == JawType.FRONT,
+            jawProgress = uiState.jawProgress[JawType.FRONT] ?: 0,
+            isSelected = uiState.jawType == JawType.FRONT,
             onJawSelected = {
                 jawViewModel.changeDetectingJawType(JawType.FRONT)
             },
-            isCompleted = jawProgress[JawType.FRONT] == 100
+            isCompleted = uiState.jawProgress[JawType.FRONT] == 100
         )
         JawButton(
             jawImage = Res.drawable.ic_upper_jaw,
-            jawProgress = jawProgress[JawType.UPPER] ?: 0,
-            isSelected = selectedJaw == JawType.UPPER,
+            jawProgress = uiState.jawProgress[JawType.UPPER] ?: 0,
+            isSelected = uiState.jawType == JawType.UPPER,
             onJawSelected = {
                 jawViewModel.changeDetectingJawType(JawType.UPPER)
             },
-            isCompleted = jawProgress[JawType.UPPER] == 100
+            isCompleted = uiState.jawProgress[JawType.UPPER] == 100
         )
 
     }

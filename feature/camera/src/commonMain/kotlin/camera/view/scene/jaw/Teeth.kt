@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.jaw
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.TweenSpec
@@ -65,11 +65,11 @@ private const val ANIMATE_DURATION_FOR_JAW_SECTION = 400
 fun UpperJawTeeth(
     jawViewModel: JawViewModel = koinViewModel(),
 ) {
-    val upperIllustrationTeeth by jawViewModel.upperIllustrationTeeth.collectAsState()
+    val uiState by jawViewModel.uiState.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
 
-    upperIllustrationTeeth.forEach {
-        when (upperIllustrationTeeth[it.key]) {
+    uiState.upperIllustrationTeeth.forEach {
+        when (uiState.upperIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
@@ -106,11 +106,11 @@ fun UpperJawTeeth(
 fun LowerJawTeeth(
     jawViewModel: JawViewModel,
 ) {
-    val lowerIllustrationTeeth by jawViewModel.lowerIllustrationTeeth.collectAsState()
+    val uiState by jawViewModel.uiState.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
 
-    lowerIllustrationTeeth.forEach {
-        when (lowerIllustrationTeeth[it.key]) {
+    uiState.lowerIllustrationTeeth.forEach {
+        when (uiState.lowerIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
@@ -147,11 +147,11 @@ fun LowerJawTeeth(
 
 @Composable
 fun FrontTeeth(jawViewModel: JawViewModel) {
-    val frontIllustrationTeeth by jawViewModel.frontIllustrationTeeth.collectAsState()
+    val uiState by jawViewModel.uiState.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
 
-    frontIllustrationTeeth.forEach {
-        when (frontIllustrationTeeth[it.key]) {
+    uiState.frontIllustrationTeeth.forEach {
+        when (uiState.frontIllustrationTeeth[it.key]) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])

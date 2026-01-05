@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.camera
 
 class ProcessSheet(
     private val checkupProcessAmount: Int,

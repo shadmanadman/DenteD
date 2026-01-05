@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.camera
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.camera
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +8,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import camera.di.cameraModule
+import camera.view.controller.CameraController
+import camera.view.scene.jaw.CameraJawSection
 import camera.viewmodel.CameraViewModel
 import camera.viewmodel.JawViewModel
 import shared.model.CameraErrorState
@@ -31,26 +34,23 @@ import shared.resources.see_result
 import shared.theme.Secondary
 import shared.theme.White
 import shared.theme.appTypography
+
 @Composable
 @Preview
-fun CameraScenePreview(){
+fun CameraScenePreview() {
     KoinApplicationPreview(application = { modules(cameraModule) }) {
-        CameraScene()
+        CameraScene(null)
     }
 }
 
 @Composable
 fun CameraScene(
+    cameraController: CameraController?,
     cameraViewModel: CameraViewModel = koinViewModel(),
     jawViewModel: JawViewModel = koinViewModel()
 ) {
-    val selectedJawType by jawViewModel.currentJawType.collectAsState()
-    val selectedJawSide by jawViewModel.currentJawSide.collectAsState()
-
-    val acceptedTeeth by cameraViewModel.acceptedTeeth.collectAsState()
-    val acceptedFrames by cameraViewModel.acceptedFrames.collectAsState()
-
-    val allJawsCompleted by jawViewModel.allJawsCompleted.collectAsState()
+    val jawUiState by jawViewModel.uiState.collectAsState()
+    val cameraUiState by cameraViewModel.uiState.collectAsState()
 
     var cameraErrorState by remember { mutableStateOf(CameraErrorState.Ok) }
     var sideError by remember { mutableStateOf(false) }
@@ -58,6 +58,18 @@ fun CameraScene(
     var everythingOkToFocus by remember { mutableStateOf<JawSide?>(null) }
     var showResult by remember { mutableStateOf(false) }
 
+    LaunchedEffect(cameraController) {
+        cameraController?.let {
+            it.onImageAvailable = { image ->
+                if (image != null) {
+                    cameraViewModel.startImageAnalysis(
+                        inputImage = image,
+                        jawType = jawUiState.jawType,
+                        jawSide = jawUiState.jawSide)
+                }
+            }
+        }
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         //Error for distance and angel
         Box(
@@ -75,19 +87,16 @@ fun CameraScene(
             })
 
         // Jaw section
-        CameraJawSection(
-            jawViewModel = jawViewModel,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+        CameraJawSection(modifier = Modifier.align(Alignment.TopCenter))
 
         // See result early
-        if (acceptedTeeth.isNotEmpty())
+        if (cameraUiState.acceptedTeeth.isNotEmpty())
             SeeResult(cameraViewModel, modifier = Modifier.align(Alignment.BottomCenter))
 
         // Detection completed
-        if (allJawsCompleted)
+        if (jawUiState.allJawsCompleted)
             ProcessSheet(
-                jawViewModel.averageJawsProgress(),
+                checkupProcessAmount = jawUiState.averageJawsProgress,
                 onSeeResultClicked = {},
                 onSelectToothClicked = {})
     }

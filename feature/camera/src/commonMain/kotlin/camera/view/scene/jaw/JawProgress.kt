@@ -1,4 +1,4 @@
-package camera.view.scene
+package camera.view.scene.jaw
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -58,7 +58,7 @@ fun CameraJawSection(
     jawViewModel: JawViewModel = koinViewModel(),
     modifier: Modifier,
 ) {
-    val currentJaw by jawViewModel.currentJawType.collectAsState()
+    val uiState by jawViewModel.uiState.collectAsState()
 
     Column(modifier = modifier.padding(top = 50.dp)) {
         // Jaw section
@@ -81,7 +81,7 @@ fun CameraJawSection(
                     isLeftSide = true
                 )
                 AnimatedContent(
-                    targetState = currentJaw,
+                    targetState = uiState.jawType,
                     transitionSpec = {
                         (fadeIn(animationSpec = tween(500)) + scaleIn(initialScale = 0.9f))
                             .togetherWith(fadeOut(animationSpec = tween(500)) + scaleOut(targetScale = 0.9f))
