@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.atomicfu)
 
             implementation(libs.kotlin.coroutines)
+
             implementation(project(":shared"))
             implementation(project(":feature:detection"))
         }

@@ -8,28 +8,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import shared.model.ToothBox
 
-// Create a cropped bitmap of the tooth using the specified rectangle
-fun ImageBitmap.cropInRect(rect: Rect): ImageBitmap {
-    val left = rect.left.coerceIn(0f, this.width.toFloat())
-    val top = rect.top.coerceIn(0f, this.height.toFloat())
-    val right = rect.right.coerceIn(0f, this.width.toFloat())
-    val bottom = rect.bottom.coerceIn(0f, this.height.toFloat())
-
-    val cropX = left.toInt()
-    val cropY = top.toInt()
-    val cropWidth = (right - left).toInt()
-    val cropHeight = (bottom - top).toInt()
-
-        Canvas(this).drawImageRect(
-            image = this,
-            srcOffset = IntOffset(cropX, cropY),
-            srcSize = IntSize(cropWidth, cropHeight),
-            dstSize = IntSize(cropWidth, cropHeight),
-            paint = Paint()
-        )
-
-    return this
-}
 
 /**
  * Visible boxes that can been seen in the screen with a small padding. the hole box should

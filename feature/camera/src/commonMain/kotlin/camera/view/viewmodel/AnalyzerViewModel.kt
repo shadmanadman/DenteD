@@ -1,24 +1,15 @@
 package camera.viewmodel
 
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import detector.calculateNormalizedPadding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import litert.Litert
-import shared.model.JawType
 import postprocessing.NumberingResult
 import shared.ext.convertToJawStatus
 import shared.model.FocusSection
 import shared.model.FrameAnalyzeStatus
 import shared.model.JawSide
 import shared.model.JawSideStatus
-import kotlin.collections.set
+import shared.model.JawType
 
 private const val SEGMENT_UPPER_MODEL_NAME = "detection_upper_float32.tflite"
 private const val SEGMENT_LOWER_MODEL_NAME = "detection_lower_float32.tflite"

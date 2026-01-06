@@ -1,188 +1,73 @@
 package analyzer
 
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.unit.IntRect
+import kclarity.Kclarity
+import shared.ext.cropWithIntRect
+import shared.model.JawSide
+import shared.model.ToothBox
+import shared.platform.SharedImage
 
 object ClarityLevel {
-
-    fun convertToGrayscale(source: ImageBitmap): ImageBitmap {
-        val width = source.width
-        val height = source.height
-
-        // Output image
-        val output = ImageBitmap(width, height, ImageBitmapConfig.Argb8888)
-
-        // Canvas for drawing onto output
-        val canvas = Canvas(output)
-
-        // Paint with grayscale color filter
-        val paint = Paint().apply {
-            colorFilter = ColorFilter.colorMatrix(
-                ColorMatrix().apply { setToSaturation(0f) }
-            )
-        }
-
-        // Draw full image using the grayscale paint
-        canvas.drawImage(
-            image = source,
-            topLeftOffset = androidx.compose.ui.geometry.Offset.Zero,
-            paint = paint
-        )
-
-        return output
+    fun SharedImage.determineClarityLevel(): Double{
+        return Kclarity(this.toByteArray()?: byteArrayOf()).clarityLevel()
     }
 
 
-//    fun applySobelFilter(source: ImageBitmap): ImageBitmap {
-//        val width = source.width
-//        val height = source.height
-//
-//        // Read pixel buffer
-//        val srcPixels = IntArray(width * height)
-//        source.readPixels(srcPixels, startX = 0, startY = 0, width = width, height = height)
-//
-//        val outPixels = IntArray(width * height)
-//
-//        val sobelX = arrayOf(
-//            intArrayOf(-1, 0, 1),
-//            intArrayOf(-2, 0, 2),
-//            intArrayOf(-1, 0, 1)
-//        )
-//        val sobelY = arrayOf(
-//            intArrayOf(-1, -2, -1),
-//            intArrayOf(0, 0, 0),
-//            intArrayOf(1, 2, 1)
-//        )
-//
-//        fun getGray(pixel: Int): Int {
-//            val r = (pixel shr 16) and 0xFF
-//            val g = (pixel shr 8) and 0xFF
-//            val b = (pixel) and 0xFF
-//            return (0.299f * r + 0.587f * g + 0.114f * b).toInt()
-//        }
-//
-//        fun clamp(value: Int, minV: Int = 0, maxV: Int = 255): Int =
-//            max(minV, min(maxV, value))
-//
-//        // Apply Sobel filter
-//        for (y in 1 until height - 1) {
-//            for (x in 1 until width - 1) {
-//                var gx = 0
-//                var gy = 0
-//
-//                for (i in 0..2) {
-//                    for (j in 0..2) {
-//                        val px = x + i - 1
-//                        val py = y + j - 1
-//                        val pixel = srcPixels[py * width + px]
-//                        val gray = getGray(pixel)
-//
-//                        gx += gray * sobelX[i][j]
-//                        gy += gray * sobelY[i][j]
-//                    }
-//                }
-//
-//                val magnitude = clamp(sqrt((gx * gx + gy * gy).toDouble()).toInt())
-//                val grayColor = (0xFF shl 24) or (magnitude shl 16) or (magnitude shl 8) or magnitude
-//
-//                outPixels[y * width + x] = grayColor
-//            }
-//        }
-//
-//        // Create output ImageBitmap
-//        return ImageBitmap(
-//            width = width,
-//            height = height,
-//            config = ImageBitmapConfig.Argb8888
-//        ).also { out ->
-//            out.writePixels(outPixels, startX = 0, startY = 0, width = width, height = height)
-//        }
-//    }
+    fun SharedImage.calibratedToothClarityLevel(
+        visibleBoxes: List<ToothBox>
+    ): Double {
+        val middleTooth = when {
+            visibleBoxes.size <= 2 -> visibleBoxes.first()
+            visibleBoxes.size > 2 -> visibleBoxes[visibleBoxes.size / 2]
+            else -> visibleBoxes.first()
+        }
 
+        val realX = ((middleTooth.x - (middleTooth.width / 2)) * 640)
+        val realY = ((middleTooth.y - (middleTooth.height / 2)) * 640)
+        val realWidth = (middleTooth.width * 640)
+        val realHeight = (middleTooth.height * 640)
 
-//    fun applyThreshold(
-//        source: ImageBitmap,
-//        threshold: Int = 128
-//    ): ImageBitmap {
-//
-//        val width = source.width
-//        val height = source.height
-//
-//        // --- Read pixels from ImageBitmap ---
-//        val srcPixels = IntArray(width * height)
-//        source.readPixels(
-//            buffer = srcPixels,
-//            startX = 0,
-//            startY = 0,
-//            width = width,
-//            height = height
-//        )
-//
-//        // --- Transform ---
-//        val outPixels = ByteArray(width * height)
-//
-//        for (i in srcPixels.indices) {
-//            val pixel = srcPixels[i]
-//
-//            val r = (pixel shr 16) and 0xFF
-//            val g = (pixel shr 8) and 0xFF
-//            val b = pixel and 0xFF
-//
-//            // Standard grayscale intensity
-//            val intensity = (0.299 * r + 0.587 * g + 0.114 * b).toInt()
-//
-//            val out = if (intensity > threshold)
-//                0xFFFFFFFF.toFloat()  // white
-//            else
-//                0xFF000000.toFloat() // black
-//
-//            outPixels[i] = out
-//        }
-//
-//        val skiaBitmap = Bitmap().apply {
-//            allocPixels(
-//                ImageInfo.makeS32(width, height, ColorAlphaType.PREMUL)
-//            )
-//            installPixels(outPixels)
-//        }
-//
-//        return skiaBitmap.
-//    }
+        val rect = IntRect(realX.toInt(), realY.toInt(), (realX + realWidth).toInt(), (realY + realHeight).toInt())
+        val croppedBitmap = this.cropWithIntRect(rect)
 
+        val clarityLevel = croppedBitmap.cropWithIntRect(rect).determineClarityLevel()
+        println("Calibrated Tooth Clarity level:$clarityLevel")
+        return clarityLevel
+    }
 
-    private fun calculateAverageGrayValue(bitmap: ImageBitmap): Double {
-        val pixelMap = bitmap.toPixelMap()
-        val width = pixelMap.width
-        val height = pixelMap.height
+    fun SharedImage.checkToothForAcceptedClarityLevel(
+        calibratedClarityLevel: Double,
+        jawSide: JawSide,
+        visibleBoxes: MutableList<ToothBox>
+    ): List<ToothBox> {
+        val acceptedTooth = mutableListOf<String>()
 
-        var blackPixelCount = 0
-        val totalPixelCount = width * height
+        for (boxes in visibleBoxes) {
+            val realX = ((boxes.x - (boxes.width / 2)) * 640)
+            val realY = ((boxes.y - (boxes.height / 2)) * 640)
+            val realWidth = (boxes.width * 640)
+            val realHeight = (boxes.height * 640)
+            try {
+                val rect = IntRect(realX.toInt(), realY.toInt(), (realX + realWidth).toInt(), (realY + realHeight).toInt())
+                val croppedBitmap = this.cropWithIntRect(rect)
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                val color = pixelMap[x, y]
-                val intensity = (color.red * 255).toInt()
-
-                // Treat pure black as black pixel
-                if (intensity == 0) {
-                    blackPixelCount++
+                val clarityLevel = croppedBitmap.determineClarityLevel()
+                println("Clarity level for this image:$clarityLevel")
+                boxes.clarityLevel = clarityLevel
+                if (clarityLevel >= calibratedClarityLevel * 0.65) {
+                    if (jawSide == JawSide.MIDDLE) {
+                        acceptedTooth.addAll(visibleBoxes.map { it.alphabeticNumber })
+                        break
+                    } else {
+                        acceptedTooth.add(boxes.alphabeticNumber)
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
-        return (blackPixelCount.toDouble() / totalPixelCount) * 100
-    }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    fun CoroutineScope.determineClarityLevel(bitmap: ImageBitmap) = produce {
-//        val grayscaleBitmap = convertToGrayscale(bitmap)
-//        val sobelBitmap = applySobelFilter(grayscaleBitmap)
-//        val thresholdBitmap = applyThreshold(sobelBitmap)
-//        send(calculateAverageGrayValue(thresholdBitmap))
-//    }
+        return visibleBoxes
+    }
 }

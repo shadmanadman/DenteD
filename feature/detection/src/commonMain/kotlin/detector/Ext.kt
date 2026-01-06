@@ -8,11 +8,13 @@ import shared.ext.resize
 import shared.model.JawSide
 import shared.model.JawType
 import shared.model.ToothNumber
+import shared.platform.SharedImage
 import kotlin.math.max
 
-fun ImageBitmap.squareMe(maxBound: Int = 640): ImageBitmap {
-    val imageWidth = this.width.toFloat()
-    val imageHeight = this.height.toFloat()
+fun SharedImage.squareMe(maxBound: Int = 640): SharedImage {
+    val imageBitmap = this.toImageBitmap()
+    val imageWidth = imageBitmap?.width?.toFloat() ?: 0f
+    val imageHeight = imageBitmap?.height?.toFloat() ?: 0f
     val maxSize = maxBound.toFloat()
 
     // Scale factor for fitting the image inside maxBound
@@ -24,7 +26,7 @@ fun ImageBitmap.squareMe(maxBound: Int = 640): ImageBitmap {
     val resized = this.resize(
         resizedWidth.toInt(),
         resizedHeight.toInt()
-    )
+    ).toImageBitmap()
 
     // Step 2: Create a square ImageBitmap (maxBound × maxBound)
     val output = ImageBitmap(width = maxBound, height = maxBound)
@@ -46,21 +48,29 @@ fun ImageBitmap.squareMe(maxBound: Int = 640): ImageBitmap {
     val dx = (maxSize - resizedWidth) / 2f
     val dy = (maxSize - resizedHeight) / 2f
 
-    canvas.drawImage(
-        image = resized,
-        topLeftOffset = androidx.compose.ui.geometry.Offset(dx, dy),
-        paint = paint
-    )
+    resized?.let {
 
-    return output
+        canvas.drawImage(
+            image = resized,
+            topLeftOffset = androidx.compose.ui.geometry.Offset(dx, dy),
+            paint = paint
+        )
+    }
+
+
+    return SharedImage.fromImageBitmap(output)
 }
 
-fun ImageBitmap.calculateNormalizedPadding(targetSize: Float = 640f): Float {
-    val scale = this.height / targetSize
-    val resizedWidth = this.width / scale
-    val dx = (targetSize - resizedWidth) / 2f
+fun SharedImage.calculateNormalizedPadding(targetSize: Float = 640f): Float {
+    val imageBitmap = this.toImageBitmap()
+    imageBitmap?.let {
+        val scale = it.height / targetSize
+        val resizedWidth = it.width / scale
+        val dx = (targetSize - resizedWidth) / 2f
 
-    return dx / targetSize
+        return dx / targetSize
+    }
+    return 0f
 }
 
 fun String.toToothNumber(): ToothNumber {
@@ -139,9 +149,8 @@ fun ToothNumber.toStringRepresentation(): String {
 }
 
 
-
-fun ToothNumber.getTheJawType():JawType{
-    return when(this){
+fun ToothNumber.getTheJawType(): JawType {
+    return when (this) {
         ToothNumber.UL1 -> JawType.UPPER
         ToothNumber.UL2 -> JawType.UPPER
         ToothNumber.UL3 -> JawType.UPPER
@@ -178,7 +187,7 @@ fun ToothNumber.getTheJawType():JawType{
 }
 
 fun ToothNumber.getTheJawSide(): JawSide {
-    return when(this){
+    return when (this) {
         ToothNumber.UL1 -> JawSide.LEFT
         ToothNumber.UL2 -> JawSide.LEFT
         ToothNumber.UL3 -> JawSide.LEFT
@@ -214,8 +223,8 @@ fun ToothNumber.getTheJawSide(): JawSide {
     }
 }
 
-fun ToothNumber.toActualNumber():Int{
-    return when(this){
+fun ToothNumber.toActualNumber(): Int {
+    return when (this) {
         ToothNumber.UL1 -> 1
         ToothNumber.UL2 -> 2
         ToothNumber.UL3 -> 3

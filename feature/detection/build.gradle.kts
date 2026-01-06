@@ -53,6 +53,9 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.ui.tooling.preview)
             implementation(libs.foundation)
+
+            implementation(libs.kclarity)
+
             implementation(project(":shared"))
         }
         commonTest.dependencies {

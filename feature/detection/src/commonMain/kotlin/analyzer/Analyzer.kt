@@ -1,17 +1,14 @@
 package analyzer
 
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.lifecycle.ViewModel
-import detector.calculateNormalizedPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.produce
-import shared.model.JawSide
-import shared.model.JawType
-import shared.model.ToothBox
 import postprocessing.FrontNumbering
 import postprocessing.OutputProcessing
 import postprocessing.UpperLowerNumbering
+import shared.model.JawSide
+import shared.model.JawType
+import shared.model.ToothBox
 
 const val IMAGE_TYPE_UPPER = "upper"
 const val IMAGE_TYPE_LOWER = "lower"

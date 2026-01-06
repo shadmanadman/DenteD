@@ -11,7 +11,7 @@ import shared.ext.resize
 import shared.model.Box
 import shared.model.JawType
 import shared.model.ToothBox
-import shared.platform.toByteArray
+import shared.platform.SharedImage
 
 const val INPUT_IMAGE_SIZE = 640
 const val IOU_THRESHOLD = 0.50F
@@ -38,19 +38,12 @@ const val H_INDEX = 3
 object Detector {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun CoroutineScope.processInput(input: ImageBitmap): ReceiveChannel<List<ByteArray>> =
-        produce {
-            val resizedInput = input.toByteArray()
-            send(listOf(resizedInput))
-        }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun CoroutineScope.runDetection(
-        input: ImageBitmap,
+        input: SharedImage,
         model: Litert = Litert,
         isFrontJaw: Boolean,
     ): ReceiveChannel<List<ToothBox>> = produce {
-        val input = processInput(input).receive()
+        val input = listOf(input.toByteArray()?:byteArrayOf())
         model.run(input, mapOf(Pair(0, outputContainer)))
         val output = processOutput(isFrontJaw, outputContainer).receive()
         send(output)

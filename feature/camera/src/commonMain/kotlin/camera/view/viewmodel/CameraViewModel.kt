@@ -72,7 +72,7 @@ class CameraViewModel : ViewModel() {
     private var normalizedPadding = 0f
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun processNormalizedPadding(resizedBitmap: ImageBitmap) {
+    private fun processNormalizedPadding(resizedBitmap: SharedImage) {
         viewModelScope.launch {
             normalizedPadding = resizedBitmap.calculateNormalizedPadding()
         }
@@ -89,18 +89,17 @@ class CameraViewModel : ViewModel() {
             if (_uiState.value.detectionStatus == DetectingStatus.Stopped) return@launch
 
             // Resize input for model
-            val resizedInput = inputImage.toImageBitmap()?.squareMe()?.resize()
+            val resizedInput = inputImage.squareMe().resize()
 
             // Calculate normalized padding
-            if (normalizedPadding == 0f && resizedInput != null) processNormalizedPadding(
-                resizedInput
-            )
+            if (normalizedPadding == 0f) processNormalizedPadding(resizedInput)
 
             // Run detection
-            if (resizedInput != null)
-                normalizedToothBox =
-                    this.runDetection(input = resizedInput, isFrontJaw = jawType == JawType.FRONT)
-                        .receive()
+            normalizedToothBox =
+                this.runDetection(
+                    input = resizedInput,
+                    isFrontJaw = jawType == JawType.FRONT
+                ).receive()
 
 
             if (normalizedToothBox.isEmpty()) {
