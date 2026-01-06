@@ -22,11 +22,10 @@ actual class SharedImage(private val bitmap: Bitmap?) {
             BitmapFactory.decodeByteArray(it, 0, it.size).asImageBitmap()
         }
     }
-}
 
-actual fun ImageBitmap.toByteArray(): ByteArray {
-    val bitmap = this.asAndroidBitmap()
-    val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-    return stream.toByteArray()
+    actual companion object {
+        actual fun fromImageBitmap(bitmap: ImageBitmap): SharedImage {
+            return SharedImage(bitmap.asAndroidBitmap())
+        }
+    }
 }

@@ -5,6 +5,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 expect class SharedImage {
     fun toByteArray(): ByteArray?
     fun toImageBitmap(): ImageBitmap?
-}
 
-expect fun ImageBitmap.toByteArray(): ByteArray
+    companion object {
+        fun fromImageBitmap(bitmap: ImageBitmap): SharedImage
+    }
+}
