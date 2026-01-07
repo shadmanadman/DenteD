@@ -6,6 +6,7 @@ import analyzer.Analyzer.processNumbering
 import analyzer.ClarityLevel.calibratedToothClarityLevel
 import analyzer.ClarityLevel.checkToothForAcceptedClarityLevel
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import camera.view.contract.CameraUiState
@@ -20,7 +21,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import postprocessing.OutputProcessing
 import shared.ext.resize
+import shared.model.AcceptedFrame
 import shared.model.CameraErrorState
 import shared.model.DetectingStatus
 import shared.model.FocusSection
@@ -47,11 +50,15 @@ class CameraViewModel : ViewModel() {
         _uiState.update { it.copy(currentFocusSection = focusedSection) }
     }
 
-    /**
-     * Analyze focused frame and find acceptable tooth. if the frame contains at least one
-     * clear tooth we hold and save the frame.
-     */
-    private fun updateAcceptedTooth(acceptedTeeth:List<ToothNumber>) {
+    private fun updateAcceptedFrames(acceptedFrame: AcceptedFrame) {
+        _uiState.update { uiState ->
+            uiState.copy(acceptedFrames = uiState.acceptedFrames.toMutableList().apply {
+                add(acceptedFrame)
+            })
+        }
+    }
+
+    private fun updateAcceptedTooth(acceptedTeeth: List<ToothNumber>) {
         _uiState.update { uiState ->
             uiState.copy(
                 acceptedTeeth = uiState.acceptedTeeth.toMutableList().apply {
@@ -63,12 +70,12 @@ class CameraViewModel : ViewModel() {
 
     private val calibratedClarityLevel = mutableDoubleStateOf(0.0)
 
-    private var normalizedPadding = 0f
+    private val normalizedPadding = mutableFloatStateOf(0f)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun processNormalizedPadding(resizedBitmap: SharedImage) {
         viewModelScope.launch {
-            normalizedPadding = resizedBitmap.calculateNormalizedPadding()
+            normalizedPadding.floatValue = resizedBitmap.calculateNormalizedPadding()
         }
     }
 
@@ -86,7 +93,7 @@ class CameraViewModel : ViewModel() {
             val resizedInput = inputImage.squareMe().resize()
 
             // Calculate normalized padding
-            if (normalizedPadding == 0f) processNormalizedPadding(resizedInput)
+            if (normalizedPadding.floatValue == 0f) processNormalizedPadding(resizedInput)
 
             // Run detection
             normalizedToothBox =
@@ -103,7 +110,7 @@ class CameraViewModel : ViewModel() {
 
             // Run numbering calculation
             val numberingResult =
-                this.processNumbering(normalizedToothBox, normalizedPadding, jawType).receive()
+                this.processNumbering(normalizedToothBox, normalizedPadding.floatValue, jawType).receive()
 
             _uiState.update { it.copy(numberingResult = numberingResult) }
 
@@ -161,7 +168,8 @@ class CameraViewModel : ViewModel() {
 
             // Set the middle tooth as the base clarity level threshold for other tooth
             if (calibratedClarityLevel.doubleValue == 0.0)
-                calibratedClarityLevel.doubleValue = resizedInput.calibratedToothClarityLevel(visibleToothBoxes)
+                calibratedClarityLevel.doubleValue =
+                    resizedInput.calibratedToothClarityLevel(visibleToothBoxes)
 
             val acceptedToothInClarityLevel = resizedInput.checkToothForAcceptedClarityLevel(
                 calibratedClarityLevel = calibratedClarityLevel.doubleValue,
@@ -169,7 +177,7 @@ class CameraViewModel : ViewModel() {
                 visibleBoxes = visibleToothBoxes.toMutableList()
             )
 
-            if (acceptedToothInClarityLevel.isEmpty()){
+            if (acceptedToothInClarityLevel.isEmpty()) {
                 println("No tooth passed the clarity level")
                 return@launch
             }
@@ -178,6 +186,19 @@ class CameraViewModel : ViewModel() {
 
 
             // Cropping process & saving the frame
+            val sideCroppedBitmap =
+                OutputProcessing.sideCroppingProcess(resizedInput, visibleToothBoxes)
+
+            if (sideCroppedBitmap != null) {
+                updateAcceptedFrames(
+                    AcceptedFrame(
+                        frameWithToothBoxes = sideCroppedBitmap,
+                        frame = sideCroppedBitmap,
+                        jawType = jawType,
+                        jawSide = jawSide
+                    )
+                )
+            }
 
         }
 

@@ -2,6 +2,7 @@ package shared.ext
 
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -42,5 +43,25 @@ fun SharedImage.cropWithIntRect(rect: IntRect): SharedImage {
     )
 
     return SharedImage.fromImageBitmap(croppedToothBitmap)
+}
+
+fun SharedImage.cropWithCoordination(
+    x: Int,
+    y: Int,
+    width: Int,
+    height: Int
+): SharedImage {
+    val newImage = ImageBitmap(width, height, ImageBitmapConfig.Argb8888)
+    val canvas = Canvas(newImage)
+
+    canvas.drawImageRect(
+        image = this.toImageBitmap()!!,
+        srcOffset = IntOffset(x, y),
+        srcSize = IntSize(width, height),
+        dstOffset = IntOffset.Zero,
+        dstSize = IntSize(width, height),
+        paint = Paint()
+    )
+    return SharedImage.fromImageBitmap(newImage)
 }
 

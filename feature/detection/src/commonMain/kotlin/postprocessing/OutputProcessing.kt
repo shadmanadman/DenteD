@@ -2,9 +2,12 @@ package postprocessing
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.IntRect
+import shared.ext.cropWithCoordination
 import shared.model.JawSide
 import shared.model.JawType
 import shared.model.ToothBox
+import shared.platform.SharedImage
+import kotlin.math.max
 
 private const val TENSOR_IMAGE_SIZE = 640F
 private const val IOU_THRESHOLD = 0.50F
@@ -194,6 +197,60 @@ object OutputProcessing {
         }
 
         return selectedBoxes
+    }
+
+    /**
+     * Cropping from the first top tooth until the last one on each detected/finished side
+     */
+    fun sideCroppingProcess(
+        originalImage: SharedImage,
+        boxes: List<ToothBox>
+    ): SharedImage? {
+
+        val minXBox = boxes.minByOrNull { it.x } ?: return null
+        val minYBox = boxes.minByOrNull { it.y } ?: return null
+        val maxXBox = boxes.maxByOrNull { it.x } ?: return null
+        val maxYBox = boxes.maxByOrNull { it.y } ?: return null
+
+        // Assuming coordinates are normalized (0.0 to 1.0) and mapped to 640px
+        val originX = (minXBox.x - (minXBox.width / 2f)) * 640
+        val originY = (minYBox.y - (minYBox.height / 2f)) * 640
+        val endX = (maxXBox.x + (maxXBox.width / 2f)) * 640
+        val endY = (maxYBox.y + (maxYBox.height / 2f)) * 640
+
+        val width = endX - originX
+        val height = endY - originY
+
+        val customPadding = 10f
+        val size = max(width, height) + 2 * customPadding
+
+        // Calculate Square Bounds
+        var left: Float
+        var top: Float
+
+        if (width > height) {
+            left = originX - customPadding
+            val centerY = originY + (height / 2f)
+            top = centerY - (size / 2f)
+        } else {
+            top = originY - customPadding
+            val centerX = originX + (width / 2f)
+            left = centerX - (size / 2f)
+        }
+
+        val originalImageAsImageBitmap = originalImage.toImageBitmap()
+        val originalImageWidth = originalImageAsImageBitmap?.width ?: 0
+        val originalImageHeight = originalImageAsImageBitmap?.height ?: 0
+
+        // Constraints & Final Dimensions
+        val finalLeft = left.coerceIn(0f, originalImageWidth.toFloat()).toInt()
+        val finalTop = top.coerceIn(0f, originalImageHeight.toFloat()).toInt()
+        val finalWidth = (size).toInt().coerceAtMost(originalImageWidth - finalLeft)
+        val finalHeight = (size).toInt().coerceAtMost(originalImageHeight - finalTop)
+
+        if (finalWidth <= 0 || finalHeight <= 0) return null
+
+        return originalImage.cropWithCoordination(finalLeft, finalTop, finalWidth, finalHeight)
     }
 
 

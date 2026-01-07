@@ -1,6 +1,7 @@
 package shared.model
 
 import androidx.compose.ui.graphics.ImageBitmap
+import shared.platform.SharedImage
 
 enum class JawPosition { UpperJaw, LowerJaw, FrontTeeth, FrontTeethUpper, FrontTeethLower }
 enum class JawSide { LEFT, RIGHT, MIDDLE }
@@ -56,9 +57,11 @@ enum class JawType {
     FRONT
 }
 
+data class FrameToothRegion(val tooth: ImageBitmap, val toothNumber: ToothNumber)
 data class AcceptedFrame(
-    val frameWithToothBox: ImageBitmap? = null,
-    val frame: ImageBitmap? = null,
+    val frameWithToothBoxes: SharedImage? = null,
+    val frameToothRegion: List<FrameToothRegion> = listOf(),
+    val frame: SharedImage? = null,
     val jawSide: JawSide = JawSide.LEFT,
     val jawType: JawType = JawType.UPPER,
     val boxes: List<ToothBox> = listOf(),
