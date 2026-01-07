@@ -85,8 +85,6 @@ class CameraViewModel : ViewModel() {
         jawSide: JawSide = JawSide.LEFT
     ) {
         viewModelScope.launch {
-            var normalizedToothBox = listOf<ToothBox>()
-
             if (_uiState.value.detectionStatus == DetectingStatus.Stopped) return@launch
 
             // Resize input for model
@@ -96,7 +94,7 @@ class CameraViewModel : ViewModel() {
             if (normalizedPadding.floatValue == 0f) processNormalizedPadding(resizedInput)
 
             // Run detection
-            normalizedToothBox =
+            val normalizedToothBox =
                 this.runDetection(
                     input = resizedInput,
                     isFrontJaw = jawType == JawType.FRONT
