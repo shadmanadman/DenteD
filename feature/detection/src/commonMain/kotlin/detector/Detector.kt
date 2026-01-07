@@ -1,13 +1,12 @@
 package detector
 
-import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import litert.Litert
 import litert.ModelOutputReshaped
-import shared.ext.resize
+import postprocessing.OutputProcessing
 import shared.model.Box
 import shared.model.JawType
 import shared.model.ToothBox
@@ -132,7 +131,9 @@ object Detector {
             val maxScoreIndex = classScores.indexOf(classScores.maxOrNull())
             val maxScore = classScores[maxScoreIndex]
 
-            send(validToothBoxExtractor(maxScore, maxScoreIndex, modelOutputLooper).receive())
+            val validToothBox = validToothBoxExtractor(maxScore, maxScoreIndex, modelOutputLooper).receive()
+
+            send(OutputProcessing.nonMaxSuppression(validToothBox))
         }
 
 
