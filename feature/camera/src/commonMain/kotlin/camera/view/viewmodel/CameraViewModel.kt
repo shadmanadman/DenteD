@@ -3,8 +3,9 @@ package camera.viewmodel
 import analyzer.Analyzer.deviceAngelChecker
 import analyzer.Analyzer.deviceDistanceChecker
 import analyzer.Analyzer.processNumbering
+import analyzer.ClarityLevel.calibratedToothClarityLevel
+import analyzer.ClarityLevel.checkToothForAcceptedClarityLevel
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import camera.view.contract.CameraUiState
@@ -12,20 +13,21 @@ import detector.Detector.detectCurrentSide
 import detector.Detector.runDetection
 import detector.calculateNormalizedPadding
 import detector.squareMe
+import detector.toToothNumber
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import shared.model.DetectingStatus
-import shared.model.FocusSection
-import shared.model.ToothNumber
 import shared.ext.resize
 import shared.model.CameraErrorState
+import shared.model.DetectingStatus
+import shared.model.FocusSection
 import shared.model.JawSide
 import shared.model.JawType
 import shared.model.ToothBox
+import shared.model.ToothNumber
 import shared.platform.SharedImage
 
 
@@ -49,19 +51,11 @@ class CameraViewModel : ViewModel() {
      * Analyze focused frame and find acceptable tooth. if the frame contains at least one
      * clear tooth we hold and save the frame.
      */
-
-    private val acceptedTeethTemp = mutableListOf<ToothNumber>()
-
-    private fun addAcceptedTeethToTemp(toothNumbers: List<ToothNumber>) {
-        acceptedTeethTemp.addAll(toothNumbers.filter { it !in acceptedTeethTemp })
-        println("This are the accepted tooth:$toothNumbers")
-    }
-
-    private fun updateAcceptedTooth() {
+    private fun updateAcceptedTooth(acceptedTeeth:List<ToothNumber>) {
         _uiState.update { uiState ->
             uiState.copy(
                 acceptedTeeth = uiState.acceptedTeeth.toMutableList().apply {
-                    addAll(acceptedTeethTemp.filter { it !in uiState.acceptedTeeth })
+                    addAll(acceptedTeeth.filter { it !in uiState.acceptedTeeth })
                 }
             )
         }
@@ -163,6 +157,28 @@ class CameraViewModel : ViewModel() {
 
             // Everything is ok to focus, zoom and manage accepted tooth
             _uiState.update { it.copy(detectionErrorState = CameraErrorState.Ok) }
+
+
+            // Set the middle tooth as the base clarity level threshold for other tooth
+            if (calibratedClarityLevel.doubleValue == 0.0)
+                calibratedClarityLevel.doubleValue = resizedInput.calibratedToothClarityLevel(visibleToothBoxes)
+
+            val acceptedToothInClarityLevel = resizedInput.checkToothForAcceptedClarityLevel(
+                calibratedClarityLevel = calibratedClarityLevel.doubleValue,
+                jawSide = jawSide,
+                visibleBoxes = visibleToothBoxes.toMutableList()
+            )
+
+            if (acceptedToothInClarityLevel.isEmpty()){
+                println("No tooth passed the clarity level")
+                return@launch
+            }
+
+            updateAcceptedTooth(acceptedToothInClarityLevel.map { it.alphabeticNumber.toToothNumber() })
+
+
+            // Cropping process & saving the frame
+
         }
 
     }
