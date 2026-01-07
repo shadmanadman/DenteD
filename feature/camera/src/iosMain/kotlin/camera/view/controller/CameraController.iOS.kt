@@ -82,6 +82,10 @@ actual class CameraController(
             }
         }
 
+        customCameraController.onFrameCapture = {image->
+            onImageAvailable?.invoke(SharedImage(image))
+        }
+
         customCameraController.onError = { error ->
             println("Camera Error: $error")
         }

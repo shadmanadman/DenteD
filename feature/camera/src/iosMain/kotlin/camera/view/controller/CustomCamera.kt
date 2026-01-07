@@ -9,6 +9,7 @@ import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.UIKit.UIDevice
 import platform.UIKit.UIDeviceOrientation
+import platform.UIKit.UIImage
 import platform.UIKit.UIView
 import platform.darwin.DISPATCH_QUEUE_PRIORITY_HIGH
 import platform.darwin.NSObject
@@ -27,6 +28,7 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
     private var isUsingFrontCamera = false
 
     var onPhotoCapture: ((NSData?) -> Unit)? = null
+    var onFrameCapture: ((UIImage?) -> Unit)? = null
     var onError: ((CameraException) -> Unit)? = null
 
     var flashMode: AVCaptureFlashMode = AVCaptureFlashModeAuto
@@ -225,7 +227,7 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
             camera.setFocusMode(AVCaptureFocusModeContinuousAutoFocus)
             camera.setSubjectAreaChangeMonitoringEnabled(true)
             camera.setFocusPointOfInterest(cgPoint)
-            camera.setCinematicVideoFixedFocusAtPoint(cgPoint)
+            camera.setCinematicVideoFixedFocusAtPoint(cgPoint, AVCaptureCinematicVideoFocusModeStrong)
         }
     }
 
@@ -249,7 +251,7 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
     }
 
     fun clearZoom() {
-        currentCamera?.setVideoZoomFactor(0)
+        currentCamera?.setVideoZoomFactor(0.0)
     }
 
     fun getMinFocusDistance(): Long? {
@@ -331,6 +333,13 @@ class CustomCameraController() : NSObject(), AVCapturePhotoCaptureDelegateProtoc
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH.toLong(), 0u)) {
             photoOutput?.capturePhotoWithSettings(settings, delegate = this)
         }
+    }
+
+    fun captureFrames() {
+        ImageAnalyzer(
+            session = captureSession!!,
+            device = currentCamera!!,
+            onFrameAnalyzed = { onFrameCapture?.invoke(it) }).start()
     }
 
 
