@@ -8,7 +8,7 @@ plugins {
 kotlin {
 
     androidLibrary {
-        namespace = "org.shad.adman.jaw.generation.jaw"
+        namespace = "org.shad.adman.jaw.generation.selection"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
@@ -18,7 +18,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "jaw"
+            baseName = "selection"
             isStatic = true
         }
     }
