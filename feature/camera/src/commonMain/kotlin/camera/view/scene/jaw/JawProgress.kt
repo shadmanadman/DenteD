@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import camera.di.cameraModule
 import camera.viewmodel.JawViewModel
+import jaw.view.viewmodel.SelectionViewModel
 import shared.model.JawType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -56,9 +58,16 @@ fun CameraJawSectionPreview() {
 @Composable
 fun CameraJawSection(
     jawViewModel: JawViewModel = koinViewModel(),
+    selectionViewModel: SelectionViewModel = koinViewModel(),
     modifier: Modifier,
 ) {
     val uiState by jawViewModel.uiState.collectAsState()
+    val selectionState by selectionViewModel.uiState.collectAsState()
+
+    // Filter only selected teeth
+    LaunchedEffect(Unit){
+        jawViewModel.applySelection(selectionState.selectedToothNumbers)
+    }
 
     Column(modifier = modifier.padding(top = 50.dp)) {
         // Jaw section
