@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import camera.di.cameraModule
-import camera.viewmodel.JawViewModel
+import camera.view.viewmodel.JawViewModel
 import jaw.view.viewmodel.SelectionViewModel
 import shared.model.JawType
 import org.jetbrains.compose.resources.painterResource

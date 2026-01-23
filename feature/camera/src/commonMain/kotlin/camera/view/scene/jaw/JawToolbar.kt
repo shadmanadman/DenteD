@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import camera.di.cameraModule
-import camera.viewmodel.JawViewModel
+import camera.view.viewmodel.JawViewModel
 import shared.model.JawType
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -70,33 +70,36 @@ fun JawToolbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        JawButton(
-            jawImage = Res.drawable.ic_lower_jaw,
-            jawProgress = uiState.jawProgress[JawType.LOWER] ?: 0,
-            isSelected = uiState.jawType == JawType.LOWER,
-            onJawSelected = {
-                jawViewModel.changeDetectingJawType(JawType.LOWER)
-            },
-            isCompleted = uiState.jawProgress[JawType.LOWER] == 100
-        )
-        JawButton(
-            jawImage = Res.drawable.ic_front_jaw,
-            jawProgress = uiState.jawProgress[JawType.FRONT] ?: 0,
-            isSelected = uiState.jawType == JawType.FRONT,
-            onJawSelected = {
-                jawViewModel.changeDetectingJawType(JawType.FRONT)
-            },
-            isCompleted = uiState.jawProgress[JawType.FRONT] == 100
-        )
-        JawButton(
-            jawImage = Res.drawable.ic_upper_jaw,
-            jawProgress = uiState.jawProgress[JawType.UPPER] ?: 0,
-            isSelected = uiState.jawType == JawType.UPPER,
-            onJawSelected = {
-                jawViewModel.changeDetectingJawType(JawType.UPPER)
-            },
-            isCompleted = uiState.jawProgress[JawType.UPPER] == 100
-        )
+        if (uiState.selectedJaw.contains(JawType.LOWER))
+            JawButton(
+                jawImage = Res.drawable.ic_lower_jaw,
+                jawProgress = uiState.jawProgress[JawType.LOWER] ?: 0,
+                isSelected = uiState.jawType == JawType.LOWER,
+                onJawSelected = {
+                    jawViewModel.changeDetectingJawType(JawType.LOWER)
+                },
+                isCompleted = uiState.jawProgress[JawType.LOWER] == 100
+            )
+        if (uiState.selectedJaw.contains(JawType.FRONT))
+            JawButton(
+                jawImage = Res.drawable.ic_front_jaw,
+                jawProgress = uiState.jawProgress[JawType.FRONT] ?: 0,
+                isSelected = uiState.jawType == JawType.FRONT,
+                onJawSelected = {
+                    jawViewModel.changeDetectingJawType(JawType.FRONT)
+                },
+                isCompleted = uiState.jawProgress[JawType.FRONT] == 100
+            )
+        if (uiState.selectedJaw.contains(JawType.UPPER))
+            JawButton(
+                jawImage = Res.drawable.ic_upper_jaw,
+                jawProgress = uiState.jawProgress[JawType.UPPER] ?: 0,
+                isSelected = uiState.jawType == JawType.UPPER,
+                onJawSelected = {
+                    jawViewModel.changeDetectingJawType(JawType.UPPER)
+                },
+                isCompleted = uiState.jawProgress[JawType.UPPER] == 100
+            )
 
     }
 }

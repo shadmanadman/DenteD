@@ -43,6 +43,7 @@ kotlin {
 
             implementation(project(":shared"))
             implementation(project(":feature:detection"))
+            implementation(project(":feature:selection"))
         }
         commonTest.dependencies {
         }

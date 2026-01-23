@@ -2,7 +2,7 @@ package camera.di
 
 import camera.viewmodel.AnalyzerViewModel
 import camera.viewmodel.CameraViewModel
-import camera.viewmodel.JawViewModel
+import camera.view.viewmodel.JawViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

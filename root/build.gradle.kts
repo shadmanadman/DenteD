@@ -32,7 +32,7 @@ kotlin {
             api(project(":shared"))
 
             implementation(project(":feature:main"))
-            implementation(project(":feature:jaw"))
+            implementation(project(":feature:selection"))
             implementation(project(":feature:camera"))
         }
         commonTest.dependencies {

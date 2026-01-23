@@ -22,8 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import camera.viewmodel.JawViewModel
-import jaw.view.viewmodel.SelectionViewModel
+import camera.view.viewmodel.JawViewModel
 import shared.ext.toIconIndex
 import shared.model.JawSide
 import shared.model.ToothDetectionStatus

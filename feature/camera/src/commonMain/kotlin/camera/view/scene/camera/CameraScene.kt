@@ -23,7 +23,7 @@ import camera.di.cameraModule
 import camera.view.controller.CameraController
 import camera.view.scene.jaw.CameraJawSection
 import camera.viewmodel.CameraViewModel
-import camera.viewmodel.JawViewModel
+import camera.view.viewmodel.JawViewModel
 import shared.model.CameraErrorState
 import shared.model.JawSide
 import org.jetbrains.compose.resources.stringResource
