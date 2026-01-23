@@ -1,87 +1,25 @@
 package camera.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import camera.view.contract.JawUiState
 import detector.SideDetector.getIncompleteSide
-import shared.ext.convertToJawStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import shared.ext.convertToJawStatus
 import shared.model.FrameAnalyzeStatus
 import shared.model.JawSide
 import shared.model.JawSideStatus
 import shared.model.JawType
 import shared.model.ToothDetectionStatus
 import shared.model.ToothNumber
-import kotlin.collections.set
 
 typealias JawProgress = Map<JawType, Int>
 
 class JawViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(JawUiState())
     val uiState: StateFlow<JawUiState> = _uiState.asStateFlow()
-
-    init {
-        _uiState.value.upperIllustrationTeeth = mapOf(
-            ToothNumber.UL8 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL7 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL6 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL5 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL4 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR4 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR5 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR6 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR7 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR8 to ToothDetectionStatus.INITIAL
-        )
-
-
-        _uiState.value.lowerIllustrationTeeth = mapOf(
-            ToothNumber.LL8 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL7 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL6 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL5 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL4 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR4 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR5 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR6 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR7 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR8 to ToothDetectionStatus.INITIAL
-        )
-
-        _uiState.value.frontIllustrationTeeth = mapOf(
-            ToothNumber.LR3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LR1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.LL3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR3 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UR1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL1 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL2 to ToothDetectionStatus.INITIAL,
-            ToothNumber.UL3 to ToothDetectionStatus.INITIAL,
-        )
-    }
-
     private val lowerLeftSide = listOf(
         ToothNumber.LL8,
         ToothNumber.LL7,
@@ -145,6 +83,28 @@ class JawViewModel : ViewModel() {
         ToothNumber.UL2,
         ToothNumber.UL3
     )
+
+    private fun List<ToothNumber>.toJawType():List<JawType>{
+        val selectedJaw = mutableListOf<JawType>()
+        return selectedJaw
+    }
+
+    fun applySelection(selection: List<ToothNumber>) {
+        if (selection.isEmpty()) return
+        _uiState.update { uiState ->
+            uiState.copy(
+                upperIllustrationTeeth = uiState.upperIllustrationTeeth.mapValues { (number, status) ->
+                    if (selection.contains(number)) status else ToothDetectionStatus.DISABLED
+                },
+                lowerIllustrationTeeth = uiState.lowerIllustrationTeeth.mapValues { (number, status) ->
+                    if (selection.contains(number)) status else ToothDetectionStatus.DISABLED
+                },
+                frontIllustrationTeeth = uiState.frontIllustrationTeeth.mapValues { (number, status) ->
+                    if (selection.contains(number)) status else ToothDetectionStatus.DISABLED
+                }
+            )
+        }
+    }
 
     fun jawSideAnalyzeStarted(currentJawSide: JawSideStatus) {
         println("Jaw side analyze started: $currentJawSide")

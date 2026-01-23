@@ -71,7 +71,8 @@ data class AcceptedFrame(
 enum class ToothDetectionStatus {
     INITIAL,
     DETECTED,
-    MISSING
+    MISSING,
+    DISABLED
 }
 
 

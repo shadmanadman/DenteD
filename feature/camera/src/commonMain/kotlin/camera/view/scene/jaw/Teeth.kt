@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import camera.viewmodel.JawViewModel
+import jaw.view.viewmodel.SelectionViewModel
 import shared.ext.toIconIndex
 import shared.model.JawSide
 import shared.model.ToothDetectionStatus
@@ -63,7 +64,7 @@ private const val ANIMATE_DURATION_FOR_JAW_SECTION = 400
 
 @Composable
 fun UpperJawTeeth(
-    jawViewModel: JawViewModel = koinViewModel(),
+    jawViewModel: JawViewModel = koinViewModel()
 ) {
     val uiState by jawViewModel.uiState.collectAsState()
     val updatedListOfTeethIcon = mutableListOf<DrawableResource>()
@@ -73,7 +74,8 @@ fun UpperJawTeeth(
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
-            null ->{}
+            ToothDetectionStatus.DISABLED -> Unit
+            null-> Unit
         }
     }
 
@@ -114,7 +116,8 @@ fun LowerJawTeeth(
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
-            null -> {}
+            ToothDetectionStatus.DISABLED -> Unit
+            null-> Unit
         }
     }
 
@@ -155,7 +158,8 @@ fun FrontTeeth(jawViewModel: JawViewModel) {
             ToothDetectionStatus.INITIAL -> updatedListOfTeethIcon.add(not_detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.DETECTED -> updatedListOfTeethIcon.add(detected_teeth_stage[it.key.toIconIndex()])
             ToothDetectionStatus.MISSING -> updatedListOfTeethIcon.add(missing_teeth_stage[it.key.toIconIndex()])
-            null -> {}
+            ToothDetectionStatus.DISABLED -> Unit
+            null-> Unit
         }
     }
 
